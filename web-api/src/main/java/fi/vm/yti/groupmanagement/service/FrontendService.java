@@ -122,7 +122,7 @@ public class FrontendService {
             if(authorizationManager.canShowAuthenticationDetails()) {
                 return frontendDao.getUsers();
             } else {
-
+                return frontendDao.getPublicUsers();
             }
         } else {
             return Collections.emptyList();
