@@ -65,9 +65,13 @@ public class PublicApiDao {
         return requireSingleOrNone(rowsToAuthorizationUsers(rows));
     }
 
+    /**
+     * List all public users, ie users with @localhost as email domain
+     * @return List of users
+     */
     public List<PublicApiUserListItem> getUsers() {
         return database.findAll(PublicApiUserListItem.class,
-                "SELECT email, firstName, lastName, id FROM \"user\" WHERE removed_at IS NULL ORDER BY lastname, firstname");
+                "SELECT email, firstName, lastName, id FROM \"user\" WHERE removed_at IS NULL AND email like '%@localhost' ORDER BY lastname, firstname");
     }
 
     public List<PublicApiUserListItem> getModifiedUsers(String ifModifiedSince) {
