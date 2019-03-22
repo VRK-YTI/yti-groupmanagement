@@ -13,7 +13,7 @@ import {ConfigurationService} from "../../services/configuration.service";
 
       <div class="navbar-header">
         <a id="main_page_link" class="navbar-brand" [routerLink]="['/']">
-          <app-logo></app-logo>
+          <!--<app-logo></app-logo>-->
           <span translate>Interoperability platform's user right management</span>
           <span *ngIf="environmentIdentifier">{{environmentIdentifier}}</span>
         </a>
