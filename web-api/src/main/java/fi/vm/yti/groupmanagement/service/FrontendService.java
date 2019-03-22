@@ -110,7 +110,7 @@ public class FrontendService {
         YtiUser user = this.userProvider.getUser();
 
         if (user.isSuperuser()) {
-            return frontendDao.getUsers();
+            return frontendDao.getPublicUsers();
         } else {
             return frontendDao.getUsersForAdminOrganizations(user.getEmail());
         }
@@ -119,7 +119,11 @@ public class FrontendService {
     @Transactional
     public List<UserWithRolesInOrganizations> getUsers() {
         if (authorizationManager.canBrowseUsers()) {
-            return frontendDao.getUsers();
+            if(authorizationManager.canShowAuthenticationDetails()) {
+                return frontendDao.getUsers();
+            } else {
+
+            }
         } else {
             return Collections.emptyList();
         }
