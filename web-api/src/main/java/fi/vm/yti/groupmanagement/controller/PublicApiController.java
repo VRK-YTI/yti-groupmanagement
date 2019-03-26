@@ -81,41 +81,24 @@ public class PublicApiController {
         else return new ResponseEntity<>(this.publicApiService.getUsers(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/organizations", method = GET, produces = APPLICATION_JSON_VALUE, params = "all")
-    @CrossOrigin
-    public ResponseEntity<List<PublicApiOrganization>> getAllOrganizations( @RequestParam(value="all", required=false) String all,
-                                                                            @RequestHeader(value="If-Modified-Since", required=false) String ifModifiedSince) {
-        logger.info("GET /organizations?all requested");
-
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            List<PublicApiOrganization> organizations = publicApiService.getModifiedOrganizations(ifModifiedSince);
-            if (organizations.size() > 0) {
-                if (all != null) {
-                    return new ResponseEntity<>(publicApiService.getOrganizations(), HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<>(organizations, HttpStatus.OK);
-                }
-            } else {
-                return new ResponseEntity<>(organizations, HttpStatus.NOT_MODIFIED);
-            }
-        }
-        else return new ResponseEntity<>(publicApiService.getOrganizations(), HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/organizations", method = GET, produces = APPLICATION_JSON_VALUE)
     @CrossOrigin
-    public ResponseEntity<List<PublicApiOrganization>> getOrganizations(@RequestHeader(value="If-Modified-Since", required=false) String ifModifiedSince) {
+    public ResponseEntity<List<PublicApiOrganization>> getOrganizations(@RequestParam(value="onlyValid", required=false, defaultValue = "false") boolean onlyValid,
+                                                                        @RequestParam(value="ifModifiedSince", required=false) String ifModifiedSinceParam,
+                                                                        @RequestHeader(value="If-Modified-Since", required=false) String ifModifiedSince) {
         logger.info("GET /organizations requested");
 
+        if(ifModifiedSince==null && ifModifiedSinceParam!=null && !ifModifiedSinceParam.isEmpty()) ifModifiedSince = ifModifiedSinceParam;
+
         if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            List<PublicApiOrganization> organizations = publicApiService.getModifiedOrganizations(ifModifiedSince);
+            List<PublicApiOrganization> organizations = publicApiService.getModifiedOrganizations(ifModifiedSince,onlyValid);
             if (organizations.size() > 0) {
                 return new ResponseEntity<>(organizations, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(organizations, HttpStatus.NOT_MODIFIED);
             }
         }
-        else return new ResponseEntity<>(publicApiService.getOrganizations(), HttpStatus.OK);
+        else return new ResponseEntity<>(onlyValid ? publicApiService.getValidOrganizations() : publicApiService.getOrganizations(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/request", method = POST)

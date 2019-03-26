@@ -88,10 +88,8 @@ public class PublicApiDao {
                 "SELECT email, firstName, lastName, id FROM \"user\" WHERE removed_at IS NULL AND created_at > ? ORDER BY lastname, firstname", date);
     }
 
-    public @NotNull List<PublicApiOrganization> getOrganizations() {
 
-        List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed from organization");
-
+    public List<PublicApiOrganization> rowsToOrganizations(List<OrganizationRow> rows) {
         return rows.stream().map(row -> {
 
             Map<String, String> prefLabel = new HashMap<>(3);
@@ -110,34 +108,40 @@ public class PublicApiDao {
         }).collect(toList());
     }
 
-    public @NotNull List<PublicApiOrganization> getModifiedOrganizations(String ifModifiedSince) {
+    public @NotNull List<PublicApiOrganization> getOrganizations() {
+
+        List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed from organization");
+
+        return rowsToOrganizations(rows);
+    }
+
+    public @NotNull List<PublicApiOrganization> getValidOrganizations() {
+
+        List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed from organization where removed = ?",false);
+
+        return rowsToOrganizations(rows);
+    }
+
+    public @NotNull List<PublicApiOrganization> getModifiedOrganizations(String ifModifiedSince, boolean onlyValid) {
 
         Date date;
+        String[] datePatterns = new String[] {
+                DateUtils.PATTERN_ASCTIME,
+                DateUtils.PATTERN_RFC1036,
+                DateUtils.PATTERN_RFC1123,
+                "yyyy-MM-dd'T'HH:mm",
+                "yyyy-MM-dd",};
+
         try {
-            date = DateUtils.parseDate(ifModifiedSince);
+            date = DateUtils.parseDate(ifModifiedSince,datePatterns);
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
 
-        List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed from organization where modified > ?", date);
+        List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed from organization where modified > ? AND removed = ?", date,!onlyValid);
 
-        return rows.stream().map(row -> {
-
-            Map<String, String> prefLabel = new HashMap<>(3);
-            Map<String, String> description = new HashMap<>(3);
-
-            prefLabel.put("fi", row.nameFi);
-            prefLabel.put("en", row.nameEn);
-            prefLabel.put("sv", row.nameSv);
-
-            description.put("fi", row.descriptionFi);
-            description.put("en", row.descriptionEn);
-            description.put("sv", row.descriptionSv);
-
-            return new PublicApiOrganization(row.id, unmodifiableMap(prefLabel), unmodifiableMap(description), row.url, row.removed);
-
-        }).collect(toList());
+        return rowsToOrganizations(rows);
     }
 
     public void addUserRequest(String email, UUID organizationId, String role) {
