@@ -32,4 +32,14 @@ public class SwaggerConfig {
                 .paths(PathSelectors.ant("/api/**"))
                 .build();
     }
+
+    @Bean
+    public Docket privateApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("2 public-api")
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.ant("/private-api/**"))
+                .build();
+    }
 }
