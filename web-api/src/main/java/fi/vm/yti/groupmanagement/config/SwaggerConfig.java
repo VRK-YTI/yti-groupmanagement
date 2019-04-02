@@ -32,7 +32,8 @@ public class SwaggerConfig {
                 .paths(PathSelectors.ant("/api/**"))
                 .build();
     }
-
+   /*
+     Removed this api from public view
     @Bean
     public Docket privateApi() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -42,4 +43,5 @@ public class SwaggerConfig {
                 .paths(PathSelectors.ant("/private-api/**"))
                 .build();
     }
+    */
 }
