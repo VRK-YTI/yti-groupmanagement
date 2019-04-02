@@ -78,6 +78,32 @@ public class FrontendDao {
         });
     }
 
+    public List<UserWithRolesInOrganizations> getPublicUsers() {
+
+        List<UserRow> rows = db.findAll(UserRow.class,
+                "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
+                        "FROM \"user\" u \n" +
+                        "  LEFT JOIN user_organization uo ON (uo.user_id = u.id) WHERE u.removed_at IS NULL AND u.email like '%localhost'\n" +
+                        "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
+                        "ORDER BY u.lastName, u.firstName \n" +
+                        "");
+
+        Map<UserRow.UserDetails, List<UserRow.OrganizationDetails>> grouped =
+                rows.stream().collect(groupingBy(row -> row.user, LinkedHashMap::new, mapping(row -> row.organization, toList())));
+
+        return mapToList(grouped.entrySet(), entry -> {
+
+            UserRow.UserDetails user = entry.getKey();
+
+            List<UserWithRolesInOrganizations.OrganizationRoles> organizations = entry.getValue().stream()
+                    .filter(org -> org.id != null)
+                    .map(org -> new UserWithRolesInOrganizations.OrganizationRoles(org.id, org.roles))
+                    .collect(toList());
+
+            return new UserWithRolesInOrganizations(user.email, user.firstName, user.lastName, user.superuser, user.id, user.creationDateTime, user.removalDateTime, organizations);
+        });
+    }
+
     public void removeUser(String email) {
         db.update("UPDATE \"user\" SET email=?, firstname=?, lastname=?, removed_at=? WHERE email = ?",
                 null, null, null, LocalDateTime.now(), email);

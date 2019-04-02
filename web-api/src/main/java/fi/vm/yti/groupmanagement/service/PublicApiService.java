@@ -52,8 +52,13 @@ public class PublicApiService {
     }
 
     @Transactional
-    public List<PublicApiOrganization> getModifiedOrganizations(String ifModifiedSince) {
-        return publicApiDao.getModifiedOrganizations(ifModifiedSince);
+    public List<PublicApiOrganization> getModifiedOrganizations(String ifModifiedSince, boolean onlyValid) {
+        return publicApiDao.getModifiedOrganizations(ifModifiedSince,onlyValid);
+    }
+
+    @Transactional
+    public List<PublicApiOrganization> getValidOrganizations() {
+        return publicApiDao.getValidOrganizations();
     }
 
     @Transactional
