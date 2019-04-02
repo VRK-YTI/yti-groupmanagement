@@ -36,7 +36,7 @@ public class SwaggerConfig {
     @Bean
     public Docket privateApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("2 public-api")
+                .groupName("2 private-api")
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.ant("/private-api/**"))
