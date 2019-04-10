@@ -11,3 +11,8 @@ out
 /frontend/node_modules
 /frontend/dist
 npm-debug.log
+.project
+.settings
+/web-api/.project
+/web-api/.settings
+/web-api/.classpath
