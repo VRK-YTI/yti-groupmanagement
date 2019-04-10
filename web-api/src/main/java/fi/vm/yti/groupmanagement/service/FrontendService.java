@@ -26,10 +26,8 @@ public class FrontendService {
     private final EmailSenderService emailSenderService;
 
     @Autowired
-    public FrontendService(FrontendDao frontendDao,
-                           AuthorizationManager authorizationManager,
-                           AuthenticatedUserProvider userProvider,
-                           EmailSenderService emailSenderService) {
+    public FrontendService(FrontendDao frontendDao, AuthorizationManager authorizationManager,
+            AuthenticatedUserProvider userProvider, EmailSenderService emailSenderService) {
         this.frontendDao = frontendDao;
         this.authorizationManager = authorizationManager;
         this.userProvider = userProvider;
@@ -110,7 +108,7 @@ public class FrontendService {
         YtiUser user = this.userProvider.getUser();
 
         if (user.isSuperuser()) {
-            return frontendDao.getPublicUsers();
+            return frontendDao.getUsers();
         } else {
             return frontendDao.getUsersForAdminOrganizations(user.getEmail());
         }
@@ -118,14 +116,20 @@ public class FrontendService {
 
     @Transactional
     public List<UserWithRolesInOrganizations> getUsers() {
-        if (authorizationManager.canBrowseUsers()) {
-            if(authorizationManager.canShowAuthenticationDetails()) {
-                return frontendDao.getUsers();
-            } else {
-                return frontendDao.getPublicUsers();
-            }
+        YtiUser user = this.userProvider.getUser();
+
+        if (user.isSuperuser()) { // Admin sees all
+            return frontendDao.getUsers();
         } else {
-            return Collections.emptyList();
+            if (authorizationManager.canBrowseUsers()) {
+                if (authorizationManager.canShowAuthenticationDetails()) {
+                    return frontendDao.getUsers();
+                } else {
+                    return frontendDao.getPublicUsers();
+                }
+            } else {
+                return Collections.emptyList();
+            }
         }
     }
 
@@ -178,7 +182,8 @@ public class FrontendService {
         check(authorizationManager.canEditOrganization(userRequest.organizationId));
 
         this.frontendDao.deleteUserRequest(requestId);
-        this.frontendDao.addUserToRoleInOrganization(userRequest.userEmail, userRequest.roleName, userRequest.organizationId);
+        this.frontendDao.addUserToRoleInOrganization(userRequest.userEmail, userRequest.roleName,
+                userRequest.organizationId);
         String name = this.frontendDao.getOrganizationNameFI(userRequest.organizationId);
         this.emailSenderService.sendEmailToUserOnAcceptance(userRequest.userEmail, name);
     }

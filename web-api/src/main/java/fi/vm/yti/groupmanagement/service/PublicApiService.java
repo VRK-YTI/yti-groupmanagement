@@ -68,7 +68,7 @@ public class PublicApiService {
 
     @Transactional
     public List<PublicApiUserListItem> getUsers() {
-        return this.publicApiDao.getUsers();
+        return this.publicApiDao.getPublicUsers();
     }
 
     @Transactional
