@@ -52,7 +52,11 @@ public final class UserRow {
 
         @Override
         public int hashCode() {
-            return email.hashCode();
+            // Removed user has no emai so use base-class hashCode as fallback
+            if(email != null){
+                return email.hashCode();
+            } else 
+                return super.hashCode();
         }
     }
 
