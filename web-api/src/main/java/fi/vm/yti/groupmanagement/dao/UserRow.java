@@ -55,8 +55,14 @@ public final class UserRow {
             // Removed user has no emai so use base-class hashCode as fallback
             if(email != null){
                 return email.hashCode();
-            } else 
-                return super.hashCode();
+            } else if(id != null){
+                // all should have existing id
+                return id.hashCode();
+            } else {
+                // Faalback, user base class hash, but this case should be never reached and
+                // it is just to ensure that false data does not crash request
+                return id.hashCode();
+            }
         }
     }
 
