@@ -18,26 +18,35 @@ import java.util.List;
 import static javax.mail.Message.RecipientType.BCC;
 import static javax.mail.Message.RecipientType.TO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class EmailSenderService {
 
     private final EmailSenderDao schedulerDao;
     private final JavaMailSender javaMailSender;
     private final String environmentUrl;
+    private final String adminEmail;
 
+    private static final Logger logger = LoggerFactory.getLogger(EmailSenderService.class);
+        
     @Autowired
     public EmailSenderService(EmailSenderDao schedulerDao,
                               JavaMailSender javaMailSender,
-                              @Value("${environment.url}") String environmentUrl) {
+                              @Value("${environment.url}") String environmentUrl,
+                              @Value("${admin.email}") String adminEmail) {
         this.schedulerDao = schedulerDao;
         this.javaMailSender = javaMailSender;
         this.environmentUrl = environmentUrl;
+        this.adminEmail=adminEmail;
     }
 
     @Transactional
     public void sendEmailsToAdmins() {
-        for (UnsentRequestsForOrganization request : schedulerDao.getUnsentRequests()) {
+        for (UnsentRequestsForOrganization request : schedulerDao.getUnsentRequests()) {            
             sendAccessRequestEmail(request.adminEmails, request.requestCount, request.nameFi);
+            // request.id = organizationId
             schedulerDao.markRequestAsSentForOrganization(request.id);
         }
     }
@@ -51,7 +60,7 @@ public class EmailSenderService {
         try {
             MimeMessage mail = javaMailSender.createMimeMessage();
             mail.addRecipients(BCC, adminEmails.stream().map(EmailSenderService::createAddress).toArray(Address[]::new));
-            String from = "yhteentoimivuus@vrk.fi";
+            String from = adminEmail;
             String message = "Sinulle on " + requestCount + " uutta käyttöoikeuspyyntöä organisaatioon '" + organizationNameFi + "':   " + environmentUrl;
             mail.setFrom(createAddress(from));
             mail.setSender(createAddress(from));
@@ -60,7 +69,8 @@ public class EmailSenderService {
 
             javaMailSender.send(mail);
 
-        } catch (MessagingException e) {
+        } catch (MessagingException e) { 
+            logger.warn("sendAccessRequestEmail failed for "+organizationNameFi);
             throw new RuntimeException(e);
         }
     }
@@ -79,6 +89,7 @@ public class EmailSenderService {
             javaMailSender.send(mail);
 
         } catch (MessagingException e) {
+            logger.warn("sendAccessRequestAcceptedEmail failed for "+organizationNameFi);
             throw new RuntimeException(e);
         }
     }
@@ -88,6 +99,7 @@ public class EmailSenderService {
         try {
             return new InternetAddress(address);
         } catch (AddressException e) {
+            logger.error("CreateAddess failed for "+address);
             throw new RuntimeException(e);
         }
     }

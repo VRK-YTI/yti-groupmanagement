@@ -22,7 +22,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @RestController
 @RequestMapping("/api")
 public class FrontendController {
@@ -119,7 +118,7 @@ public class FrontendController {
 
     @RequestMapping(value = "/request", method = POST, consumes = APPLICATION_JSON_VALUE)
     public void addUserRequest(@RequestBody UserRequestModel request) {
-        logger.info("addUserRequest requested for email: " + request.email + ", role: " + request.role + " for organization id: " + request.organizationId);
+        logger.info("addUserRequest requested for email: " + request.email + ", role: " + request.role + " for organization id: " + request.organizationId);        
         this.frontendService.addUserRequest(request);
     }
 

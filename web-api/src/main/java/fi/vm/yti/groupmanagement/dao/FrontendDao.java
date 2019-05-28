@@ -14,9 +14,13 @@ import java.util.*;
 import static fi.vm.yti.groupmanagement.util.CollectionUtil.mapToList;
 import static java.util.stream.Collectors.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Repository
 public class FrontendDao {
+
+    private static final Logger logger = LoggerFactory.getLogger(FrontendDao.class);
 
     private final Database db;
 
@@ -181,8 +185,16 @@ public class FrontendDao {
     public String getOrganizationNameFI(UUID id ) { return db.findUnique(String.class,"SELECT name_fi FROM organization WHERE id=?", id);}
 
     public void addUserRequest(UserRequestModel userRequest) {
+        logger.info("AddUserRequest 1");
+        // Log new user id
         db.update("INSERT INTO request (user_id, organization_id, role_name, sent) VALUES ((select id from \"user\" where email = ?),?,?,?)",
                 userRequest.email, userRequest.organizationId, userRequest.role, false);
+        // Log newly created  user id
+        logger.info("AddUserRequest 2");
+        @NotNull List<UUID> userIds = db.findAll(UUID.class, "SELECT id from user where email = ?", userRequest.email);
+        if(userIds != null && userIds.size() == 1){
+            logger.info("AddNewUser id:"+userIds.get(0).toString());
+        }
     }
 
     public @NotNull List<UserRequestWithOrganization> getAllUserRequestsForOrganizations(@Nullable Set<UUID> organizations) {
