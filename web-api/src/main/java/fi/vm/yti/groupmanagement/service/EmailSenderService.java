@@ -40,6 +40,7 @@ public class EmailSenderService {
         this.javaMailSender = javaMailSender;
         this.environmentUrl = environmentUrl;
         this.adminEmail=adminEmail;
+        logger.info("AdminEmail:"+adminEmail);
     }
 
     @Transactional
