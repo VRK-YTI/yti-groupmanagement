@@ -58,7 +58,7 @@ dependencies {
     compile "org.springframework.security:spring-security-core"
     compile "org.springframework.security:spring-security-config"
     compile "org.springframework.security:spring-security-web"
-    compile "fi.vm.yti:yti-spring-security:0.1.7"
+    compile "fi.vm.yti:yti-spring-security:0.1.8"
 
     compile "org.postgresql:postgresql:9.4.1212"
     compile "org.dalesbred:dalesbred:1.2.5"
