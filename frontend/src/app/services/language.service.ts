@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Language, Localizable, Localizer } from 'yti-common-ui/types/localization';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { getFromLocalStorage, setToLocalStorage } from 'yti-common-ui/utils/storage';
 
 export { Language };
@@ -54,5 +54,20 @@ export class LanguageService implements Localizer {
 
       return '';
     }
+  }
+
+  translateToGivenLanguage(localizable: Localizable, languageToUse: string | null): string {
+    if (!localizable) {
+      return '';
+    }
+
+    if (languageToUse) {
+      const primaryLocalization = localizable[languageToUse];
+      if (primaryLocalization) {
+        return primaryLocalization;
+      }
+    }
+
+    return this.translate(localizable);
   }
 }
