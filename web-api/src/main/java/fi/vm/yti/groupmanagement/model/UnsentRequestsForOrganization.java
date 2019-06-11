@@ -10,5 +10,7 @@ public class UnsentRequestsForOrganization {
     public String nameEn;
     public String nameSv;
     public List<String> adminEmails;
+    public List<UUID> adminUsers;
+    public UUID userId;
     public int requestCount;
 }

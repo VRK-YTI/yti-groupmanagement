@@ -149,4 +149,12 @@ public class FrontendController {
 
         return model;
     }
+
+   /** uncomment if email-sending loop needs to be triggered manually for local testing purposes.     
+    @RequestMapping(value = "/email", method = GET, produces = APPLICATION_JSON_VALUE)
+    public void email() {
+        logger.info("run email sending loop" );        
+        this.frontendService.sendEmails();
+    }
+    */
 }

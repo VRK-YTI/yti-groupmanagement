@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.mail.MailSendException;
 
 import javax.mail.Address;
 import javax.mail.MessagingException;
@@ -14,6 +15,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.UUID;
 
 import static javax.mail.Message.RecipientType.BCC;
 import static javax.mail.Message.RecipientType.TO;
@@ -40,24 +42,25 @@ public class EmailSenderService {
         this.javaMailSender = javaMailSender;
         this.environmentUrl = environmentUrl;
         this.adminEmail=adminEmail;
-        logger.info("AdminEmail:"+adminEmail);
-    }
-
+        logger.info("SendEmail: AdminEmail:"+adminEmail);
+    }    
+    
     @Transactional
     public void sendEmailsToAdmins() {
-        for (UnsentRequestsForOrganization request : schedulerDao.getUnsentRequests()) {            
-            sendAccessRequestEmail(request.adminEmails, request.requestCount, request.nameFi);
+        for (UnsentRequestsForOrganization request : schedulerDao.getUnsentRequests()) {
+            logger.info("SendEmail; AccessRequest  for userId:"+request.id);
+            sendAccessRequestEmail(request.adminEmails, request.adminUsers, request.userId,  request.requestCount, request.nameFi);
             // request.id = organizationId
             schedulerDao.markRequestAsSentForOrganization(request.id);
         }
     }
 
     @Transactional
-    public void sendEmailToUserOnAcceptance(String userEmail, String organizationNameFi) {
-        sendAccessRequestAcceptedEmail(userEmail, organizationNameFi);
+    public void sendEmailToUserOnAcceptance(String userEmail, UUID userId,  String organizationNameFi) {
+        sendAccessRequestAcceptedEmail(userEmail, userId, organizationNameFi);
     }
 
-    private void sendAccessRequestEmail(List<String> adminEmails, int requestCount, String organizationNameFi) {
+    private void sendAccessRequestEmail(List<String> adminEmails, List<UUID> adminUsers, UUID userId, int requestCount, String organizationNameFi) {
         try {
             MimeMessage mail = javaMailSender.createMimeMessage();
             mail.addRecipients(BCC, adminEmails.stream().map(EmailSenderService::createAddress).toArray(Address[]::new));
@@ -68,15 +71,19 @@ public class EmailSenderService {
             mail.setSubject("Sinulle on uusia käyttöoikeuspyyntöjä", "UTF-8");
             mail.setText(message, "UTF-8");
 
+            logger.info("SendEmail:  Accept Access Request for user:"+ userId.toString()+" sent to the following admins:"+ adminUsers.toString() );
             javaMailSender.send(mail);
 
         } catch (MessagingException e) { 
-            logger.warn("sendAccessRequestEmail failed for "+organizationNameFi);
+            // log exception
+            logger.warn("SendEmail: sendAccessRequest accept  failed for "+organizationNameFi);
             throw new RuntimeException(e);
+        } catch (MailSendException me){
+            logger.warn("SendEmail: sendAccessRequest accept  failed for "+organizationNameFi + " Exception:"+me.getMessage());
         }
     }
 
-    private void sendAccessRequestAcceptedEmail(String userEmail, String organizationNameFi) {
+    private void sendAccessRequestAcceptedEmail(String userEmail, UUID userId, String organizationNameFi) {
         try {
             MimeMessage mail = javaMailSender.createMimeMessage();
             mail.addRecipient(TO, createAddress(userEmail));
@@ -87,10 +94,11 @@ public class EmailSenderService {
             mail.setSubject("Ilmoitus käyttöoikeuden hyväksymisestä", "UTF-8");
             mail.setText(message, "UTF-8");
 
+            logger.info("sendEmail: Access request accepted to the user:"+userId.toString());
             javaMailSender.send(mail);
 
         } catch (MessagingException e) {
-            logger.warn("sendAccessRequestAcceptedEmail failed for "+organizationNameFi);
+            logger.warn("SendEmail: sendAccessRequestAcceptedEmail failed for "+organizationNameFi);
             throw new RuntimeException(e);
         }
     }
@@ -100,7 +108,7 @@ public class EmailSenderService {
         try {
             return new InternetAddress(address);
         } catch (AddressException e) {
-            logger.error("CreateAddess failed for "+address);
+            logger.error("SendEmail: CreateAddess failed for "+address);
             throw new RuntimeException(e);
         }
     }

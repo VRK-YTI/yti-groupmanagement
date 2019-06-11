@@ -218,7 +218,7 @@ public class FrontendDao {
 
     public @NotNull UserRequest getUserRequest(int requestId) {
         return db.findUnique(UserRequest.class,
-                "SELECT r.id, u.email as user_email, r.organization_id, r.role_name, r.sent FROM request r \n" +
+                "SELECT r.id, u.email as user_email, r.user_id, r.organization_id, r.role_name, r.sent FROM request r \n" +
                         "LEFT JOIN \"user\" u on (u.id = r.user_id) \n" +
                         "WHERE r.id = ?", requestId);
     }
