@@ -52,6 +52,9 @@ msgstr ""
 msgid "Suomi.fi Data Vocabularies"
 msgstr ""
 
+msgid "Suomi.fi Comments"
+msgstr ""
+
 msgid "Save"
 msgstr ""
 
