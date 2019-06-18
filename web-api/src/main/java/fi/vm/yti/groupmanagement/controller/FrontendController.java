@@ -142,6 +142,7 @@ public class FrontendController {
         model.codeListUrl = this.applicationProperties.getCodeListUrl();
         model.dataModelUrl = this.applicationProperties.getDataModelUrl();
         model.terminologyUrl = this.applicationProperties.getTerminologyUrl();
+        model.commentsUrl = this.applicationProperties.getCommentsUrl();
         model.dev = this.applicationProperties.getDevMode();
         model.env = this.applicationProperties.getEnv();
         model.fakeLoginAllowed =  this.applicationProperties.isFakeLoginAllowed();

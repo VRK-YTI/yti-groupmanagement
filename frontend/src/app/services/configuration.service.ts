@@ -40,6 +40,10 @@ export class ConfigurationService {
     return this.configuration.codeListUrl;
   }
 
+  get commentsUrl(): string {
+    return this.configuration.commentsUrl;
+  }
+
   get fakeLoginAllowed(): boolean {
     return this.configuration.fakeLoginAllowed;
   }

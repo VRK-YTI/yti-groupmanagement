@@ -74,6 +74,7 @@ import {ConfigurationService} from "../../services/configuration.service";
             <a class="dropdown-item" id="navigation_reference_data_link" [href]="configService.codeListUrl" target="_blank" translate>Suomi.fi Reference Data</a>
             <a class="dropdown-item" id="navigation_terminologies_link" [href]="configService.terminologyUrl" target="_blank" translate>Suomi.fi Terminologies</a>
             <a class="dropdown-item" id="navigation_data_vocabularies_link" [href]="configService.dataModelUrl" target="_blank" translate>Suomi.fi Data Vocabularies</a>
+            <a class="dropdown-item" id="navigation_comments_link" [href]="configService.commentsUrl" target="_blank" translate>Suomi.fi Comments</a>
           </div>
         </li>
       </ul>
