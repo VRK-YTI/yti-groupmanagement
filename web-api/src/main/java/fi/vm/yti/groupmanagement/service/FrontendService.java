@@ -121,7 +121,8 @@ public class FrontendService {
         YtiUser user = this.userProvider.getUser();
 
         if (user.isSuperuser()) {
-            return frontendDao.getPublicUsers();
+            // Superuser can see all users from all organizations
+            return frontendDao.getUsers();
         }
         
         if (authorizationManager.canBrowseUsers()) {
