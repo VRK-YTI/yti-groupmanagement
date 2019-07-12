@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://rhp-dev.suomi.fi",
+    "target": "https://rhp.dev.yti.cloud.vrk.fi",
     "changeOrigin": true,
     "secure": false
   }
