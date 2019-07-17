@@ -35,10 +35,10 @@ public class ShibbolethErrorController {
                       Map<String, Object> model) {
 
         logger.info("loginError, requestURL: " + requestURL + ", errorType: " + errorType + " and errorText: " + errorText);
-        boolean singUpMissing = isSingUpMissing(errorType, statusCode2);
+        boolean signUpMissing = isSignUpMissing(errorType, statusCode, statusCode2);
 
-        model.put("missingSignUp", singUpMissing);
-        model.put("genericError", !singUpMissing);
+        model.put("missingSignUp", signUpMissing);
+        model.put("genericError", !signUpMissing);
 
         model.put("registrationUrl", registrationUrl);
 
@@ -58,8 +58,10 @@ public class ShibbolethErrorController {
         return "loginError";
     }
 
-    private static boolean isSingUpMissing(@Nullable String errorType, @Nullable String statusCode2) {
+    private static boolean isSignUpMissing(@Nullable String errorType, @Nullable String statusCode, @Nullable String statusCode2) {
         return "opensaml::FatalProfileException".equals(errorType) &&
-                "urn:oasis:names:tc:SAML:2.0:status:RequestDenied".equals(statusCode2);
+                "urn:oasis:names:tc:SAML:2.0:status:RequestDenied".equals(statusCode2) ||
+            "opensaml::FatalProfileException".equals(errorType) &&
+                "urn:oasis:names:tc:SAML:2.0:status:Responder".equals(statusCode);
     }
 }
