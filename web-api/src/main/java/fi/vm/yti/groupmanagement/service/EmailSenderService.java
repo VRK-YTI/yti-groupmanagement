@@ -14,6 +14,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.UUID;
 
 import static javax.mail.Message.RecipientType.BCC;
 import static javax.mail.Message.RecipientType.TO;
@@ -48,7 +49,7 @@ public class EmailSenderService {
     }
 
     @Transactional
-    public void sendEmailToUserOnAcceptance(String userEmail, String organizationNameFi) {
+    public void sendEmailToUserOnAcceptance(String userEmail, UUID userId, String organizationNameFi) {
         sendAccessRequestAcceptedEmail(userEmail, organizationNameFi);
     }
 
