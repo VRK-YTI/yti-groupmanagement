@@ -57,7 +57,7 @@ public class EmailSenderService {
         try {
             MimeMessage mail = javaMailSender.createMimeMessage();
             mail.addRecipients(BCC, adminEmails.stream().map(EmailSenderService::createAddress).toArray(Address[]::new));
-            String from = "yhteentoimivuus@vrk.fi";
+            String from = "y-alusta.tuotetiimi@vrk.fi";
             String message = "Sinulle on " + requestCount + " uutta käyttöoikeuspyyntöä organisaatioon '" + organizationNameFi + "':   " + environmentUrl;
             mail.setFrom(createAddress(from));
             mail.setSender(createAddress(from));
@@ -76,7 +76,7 @@ public class EmailSenderService {
         try {
             MimeMessage mail = javaMailSender.createMimeMessage();
             mail.addRecipient(TO, createAddress(userEmail));
-            String from = "yhteentoimivuus@vrk.fi";
+            String from = "y-alusta.tuotetiimi@vrk.fi";
             String message = "Teille on myönnetty käyttöoikeus yhteentoimivuusalustan organisaatioon '" + organizationNameFi + "':   " + environmentUrl;
             mail.setFrom(createAddress(from));
             mail.setSender(createAddress(from));
