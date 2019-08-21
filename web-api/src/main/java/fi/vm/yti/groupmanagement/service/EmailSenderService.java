@@ -28,15 +28,19 @@ public class EmailSenderService {
     private final EmailSenderDao schedulerDao;
     private final JavaMailSender javaMailSender;
     private final String environmentUrl;
+    private final String adminEmail;
     private static final Logger logger = LoggerFactory.getLogger(EmailSenderService.class);
         
     @Autowired
     public EmailSenderService(EmailSenderDao schedulerDao,
                               JavaMailSender javaMailSender,
-                              @Value("${environment.url}") String environmentUrl) {
+                              @Value("${environment.url}") String environmentUrl,
+                              @Value("${admin.email") String adminEmail) {
         this.schedulerDao = schedulerDao;
         this.javaMailSender = javaMailSender;
         this.environmentUrl = environmentUrl;
+        this.adminEmail = adminEmail;
+        logger.info("Use configured ADMIN email:"+adminEmail);
     }
 
     @Transactional
@@ -57,10 +61,9 @@ public class EmailSenderService {
         try {
             MimeMessage mail = javaMailSender.createMimeMessage();
             mail.addRecipients(BCC, adminEmails.stream().map(EmailSenderService::createAddress).toArray(Address[]::new));
-            String from = "y-alusta.tuotetiimi@vrk.fi";
             String message = "Sinulle on " + requestCount + " uutta käyttöoikeuspyyntöä organisaatioon '" + organizationNameFi + "':   " + environmentUrl;
-            mail.setFrom(createAddress(from));
-            mail.setSender(createAddress(from));
+            mail.setFrom(createAddress(adminEmail));
+            mail.setSender(createAddress(adminEmail));
             mail.setSubject("Sinulle on uusia käyttöoikeuspyyntöjä", "UTF-8");
             mail.setText(message, "UTF-8");
 
@@ -76,10 +79,9 @@ public class EmailSenderService {
         try {
             MimeMessage mail = javaMailSender.createMimeMessage();
             mail.addRecipient(TO, createAddress(userEmail));
-            String from = "y-alusta.tuotetiimi@vrk.fi";
             String message = "Teille on myönnetty käyttöoikeus yhteentoimivuusalustan organisaatioon '" + organizationNameFi + "':   " + environmentUrl;
-            mail.setFrom(createAddress(from));
-            mail.setSender(createAddress(from));
+            mail.setFrom(createAddress(adminEmail));
+            mail.setSender(createAddress(adminEmail));
             mail.setSubject("Ilmoitus käyttöoikeuden hyväksymisestä", "UTF-8");
             mail.setText(message, "UTF-8");
 
