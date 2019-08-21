@@ -35,7 +35,7 @@ public class EmailSenderService {
     public EmailSenderService(EmailSenderDao schedulerDao,
                               JavaMailSender javaMailSender,
                               @Value("${environment.url}") String environmentUrl,
-                              @Value("${admin.email") String adminEmail) {
+                              @Value("${admin.email}") String adminEmail) {
         this.schedulerDao = schedulerDao;
         this.javaMailSender = javaMailSender;
         this.environmentUrl = environmentUrl;
