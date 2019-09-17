@@ -110,7 +110,7 @@ public class FrontendService {
         YtiUser user = this.userProvider.getUser();
 
         if (user.isSuperuser()) {
-            return frontendDao.getPublicUsers();
+            return frontendDao.getUsers();
         } else {
             return frontendDao.getUsersForAdminOrganizations(user.getEmail());
         }
