@@ -87,7 +87,7 @@ public class FrontendDao {
         List<UserRow> rows = db.findAll(UserRow.class,
                 "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
                         "FROM \"user\" u \n" +
-                        "  LEFT JOIN user_organization uo ON (uo.user_id = u.id) WHERE u.removed_at IS NULL AND u.email like '%localhost'\n" +
+                        "LEFT JOIN user_organization uo ON (uo.user_id = u.id) WHERE u.removed_at IS NULL AND u.email like '%localhost'\n" +
                         "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
                         "ORDER BY u.lastName, u.firstName \n" +
                         "");
@@ -109,6 +109,7 @@ public class FrontendDao {
     }
 
     public void removeUser(String email) {
+        db.update("DELETE FROM user_organization uo USING \"user\" u WHERE uo.user_id = u.id AND u.email = ?", email);
         db.update("UPDATE \"user\" SET email=?, firstname=?, lastname=?, removed_at=? WHERE email = ?",
                 null, null, null, LocalDateTime.now(), email);
     }

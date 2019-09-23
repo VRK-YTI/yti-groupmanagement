@@ -6,6 +6,9 @@ import fi.vm.yti.groupmanagement.security.AuthorizationManager;
 import fi.vm.yti.security.AuthenticatedUserProvider;
 import fi.vm.yti.security.Role;
 import fi.vm.yti.security.YtiUser;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,7 @@ public class FrontendService {
     private final AuthorizationManager authorizationManager;
     private final AuthenticatedUserProvider userProvider;
     private final EmailSenderService emailSenderService;
+    private static final Logger logger = LoggerFactory.getLogger(FrontendService.class);
 
     @Autowired
     public FrontendService(FrontendDao frontendDao,
@@ -120,11 +124,6 @@ public class FrontendService {
     public List<UserWithRolesInOrganizations> getUsers() {
         YtiUser user = this.userProvider.getUser();
 
-        if (user.isSuperuser()) {
-            // Superuser can see all users from all organizations
-            return frontendDao.getUsers();
-        }
-        
         if (authorizationManager.canBrowseUsers()) {
             if(authorizationManager.canShowAuthenticationDetails()) {
                 return frontendDao.getUsers();
@@ -137,8 +136,13 @@ public class FrontendService {
     }
 
     @Transactional
-    public void removeUser(String email) {
-        frontendDao.removeUser(email);
+    public boolean removeUser(String email) {
+        YtiUser user = userProvider.getUser();
+        if(user.isSuperuser() && !user.getEmail().equals(email)) {
+            logger.info("Removing user from group management!");
+            frontendDao.removeUser(email);
+            return true;
+        } else return false;
     }
 
     @Transactional

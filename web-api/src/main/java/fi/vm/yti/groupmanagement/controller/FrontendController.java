@@ -31,7 +31,6 @@ public class FrontendController {
     private final AuthenticatedUserProvider userProvider;
     private final ApplicationProperties applicationProperties;
     private final ImpersonateProperties impersonateProperties;
-
     private static final Logger logger = LoggerFactory.getLogger(FrontendController.class);
 
     @Autowired
@@ -105,9 +104,7 @@ public class FrontendController {
 
     @RequestMapping(value = "/removeuser/{email}/", method = POST)
     public Boolean removeUser(@PathVariable("email") String email) {
-        logger.info("removeUser requested for email: " + email);
-        this.frontendService.removeUser(email);
-        return true;
+        return this.frontendService.removeUser(email);
     }
 
     @RequestMapping(value = "/requests", method = GET, produces = APPLICATION_JSON_VALUE)

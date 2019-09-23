@@ -37,7 +37,7 @@ public class AuthorizationManager {
     }
 
     public boolean canShowAuthenticationDetails() {
-        return !getUser().isAnonymous();
+        return !getUser().isAnonymous() && !getUser().getEmail().endsWith("@localhost");
     }
 
     public boolean canBrowseUsers() {
