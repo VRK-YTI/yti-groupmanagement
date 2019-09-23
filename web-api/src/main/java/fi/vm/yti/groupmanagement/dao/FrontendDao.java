@@ -1,6 +1,7 @@
 package fi.vm.yti.groupmanagement.dao;
 
 import fi.vm.yti.groupmanagement.model.*;
+
 import org.dalesbred.Database;
 import org.dalesbred.query.QueryBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -32,25 +33,25 @@ public class FrontendDao {
     public List<UserWithRolesInOrganizations> getUsersForAdminOrganizations(String email) {
 
         List<UserRow> rows = db.findAll(UserRow.class,
-                    "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
-                            "FROM \"user\" u \n" +
-                            "  LEFT JOIN user_organization uo ON (uo.user_id = u.id) \n" +
-                            "WHERE uo.organization_id IN (SELECT organization_id FROM user_organization WHERE u.email = ? and role_name='ADMIN') \n" +
-                            "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
-                            "ORDER BY u.lastName, u.firstName \n" +
-                            "", email);
+            "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
+                "FROM \"user\" u \n" +
+                "  LEFT JOIN user_organization uo ON (uo.user_id = u.id) \n" +
+                "WHERE uo.organization_id IN (SELECT organization_id FROM user_organization WHERE u.email = ? and role_name='ADMIN') \n" +
+                "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
+                "ORDER BY u.lastName, u.firstName \n" +
+                "", email);
 
         Map<UserRow.UserDetails, List<UserRow.OrganizationDetails>> grouped =
-                rows.stream().collect(groupingBy(row -> row.user, LinkedHashMap::new, mapping(row -> row.organization, toList())));
+            rows.stream().collect(groupingBy(row -> row.user, LinkedHashMap::new, mapping(row -> row.organization, toList())));
 
         return mapToList(grouped.entrySet(), entry -> {
 
             UserRow.UserDetails user = entry.getKey();
 
             List<UserWithRolesInOrganizations.OrganizationRoles> organizations = entry.getValue().stream()
-                    .filter(org -> org.id != null)
-                    .map(org -> new UserWithRolesInOrganizations.OrganizationRoles(org.id, org.roles))
-                    .collect(toList());
+                .filter(org -> org.id != null)
+                .map(org -> new UserWithRolesInOrganizations.OrganizationRoles(org.id, org.roles))
+                .collect(toList());
 
             return new UserWithRolesInOrganizations(user.email, user.firstName, user.lastName, user.superuser, user.id, user.creationDateTime, user.removalDateTime, organizations);
         });
@@ -59,24 +60,24 @@ public class FrontendDao {
     public List<UserWithRolesInOrganizations> getUsers() {
 
         List<UserRow> rows = db.findAll(UserRow.class,
-                "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
-                        "FROM \"user\" u \n" +
-                        "  LEFT JOIN user_organization uo ON (uo.user_id = u.id) WHERE u.removed_at IS NULL \n" +
-                        "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
-                        "ORDER BY u.lastName, u.firstName \n" +
-                        "");
+            "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
+                "FROM \"user\" u \n" +
+                "  LEFT JOIN user_organization uo ON (uo.user_id = u.id) WHERE u.removed_at IS NULL \n" +
+                "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
+                "ORDER BY u.lastName, u.firstName \n" +
+                "");
 
         Map<UserRow.UserDetails, List<UserRow.OrganizationDetails>> grouped =
-                rows.stream().collect(groupingBy(row -> row.user, LinkedHashMap::new, mapping(row -> row.organization, toList())));
+            rows.stream().collect(groupingBy(row -> row.user, LinkedHashMap::new, mapping(row -> row.organization, toList())));
 
         return mapToList(grouped.entrySet(), entry -> {
 
             UserRow.UserDetails user = entry.getKey();
 
             List<UserWithRolesInOrganizations.OrganizationRoles> organizations = entry.getValue().stream()
-                    .filter(org -> org.id != null)
-                    .map(org -> new UserWithRolesInOrganizations.OrganizationRoles(org.id, org.roles))
-                    .collect(toList());
+                .filter(org -> org.id != null)
+                .map(org -> new UserWithRolesInOrganizations.OrganizationRoles(org.id, org.roles))
+                .collect(toList());
 
             return new UserWithRolesInOrganizations(user.email, user.firstName, user.lastName, user.superuser, user.id, user.creationDateTime, user.removalDateTime, organizations);
         });
@@ -85,33 +86,38 @@ public class FrontendDao {
     public List<UserWithRolesInOrganizations> getPublicUsers() {
 
         List<UserRow> rows = db.findAll(UserRow.class,
-                "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
-                        "FROM \"user\" u \n" +
-                        "LEFT JOIN user_organization uo ON (uo.user_id = u.id) WHERE u.removed_at IS NULL AND u.email like '%localhost'\n" +
-                        "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
-                        "ORDER BY u.lastName, u.firstName \n" +
-                        "");
+            "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
+                "FROM \"user\" u \n" +
+                "LEFT JOIN user_organization uo ON (uo.user_id = u.id) WHERE u.removed_at IS NULL AND u.email like '%localhost'\n" +
+                "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
+                "ORDER BY u.lastName, u.firstName \n" +
+                "");
 
         Map<UserRow.UserDetails, List<UserRow.OrganizationDetails>> grouped =
-                rows.stream().collect(groupingBy(row -> row.user, LinkedHashMap::new, mapping(row -> row.organization, toList())));
+            rows.stream().collect(groupingBy(row -> row.user, LinkedHashMap::new, mapping(row -> row.organization, toList())));
 
         return mapToList(grouped.entrySet(), entry -> {
 
             UserRow.UserDetails user = entry.getKey();
 
             List<UserWithRolesInOrganizations.OrganizationRoles> organizations = entry.getValue().stream()
-                    .filter(org -> org.id != null)
-                    .map(org -> new UserWithRolesInOrganizations.OrganizationRoles(org.id, org.roles))
-                    .collect(toList());
+                .filter(org -> org.id != null)
+                .map(org -> new UserWithRolesInOrganizations.OrganizationRoles(org.id, org.roles))
+                .collect(toList());
 
             return new UserWithRolesInOrganizations(user.email, user.firstName, user.lastName, user.superuser, user.id, user.creationDateTime, user.removalDateTime, organizations);
         });
     }
 
-    public void removeUser(String email) {
+    public boolean removeUser(String email) {
         db.update("DELETE FROM user_organization uo USING \"user\" u WHERE uo.user_id = u.id AND u.email = ?", email);
-        db.update("UPDATE \"user\" SET email=?, firstname=?, lastname=?, removed_at=? WHERE email = ?",
-                null, null, null, LocalDateTime.now(), email);
+        int modifiedRows = db.update("UPDATE \"user\" SET email=?, firstname=?, lastname=?, removed_at=? WHERE email = ?",
+            null, null, null, LocalDateTime.now(), email);
+        if (modifiedRows > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public @NotNull List<OrganizationListItem> getOrganizationListOpt(Boolean showRemoved) {
@@ -125,18 +131,18 @@ public class FrontendDao {
     }
 
     public @NotNull Organization getOrganization(UUID organizationId) {
-        return db.findUnique(Organization.class,"SELECT id, name_en, name_fi, name_sv, description_en, description_fi, description_sv, url, removed FROM organization where id = ?", organizationId);
+        return db.findUnique(Organization.class, "SELECT id, name_en, name_fi, name_sv, description_en, description_fi, description_sv, url, removed FROM organization where id = ?", organizationId);
     }
 
     public @NotNull List<UserWithRoles> getOrganizationUsers(UUID organizationId) {
 
         List<UserRow> rows = db.findAll(UserRow.class,
-                "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
-                        "FROM \"user\" u \n" +
-                        "  LEFT JOIN user_organization uo ON (uo.user_id = u.id) \n" +
-                        "WHERE uo.organization_id = ? \n" +
-                        "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
-                        "ORDER BY u.lastName, u.firstName, u.email", organizationId);
+            "SELECT u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id, u.removed_at, array_agg(uo.role_name) AS roles \n" +
+                "FROM \"user\" u \n" +
+                "  LEFT JOIN user_organization uo ON (uo.user_id = u.id) \n" +
+                "WHERE uo.organization_id = ? \n" +
+                "GROUP BY u.email, u.firstName, u.lastName, u.superuser, uo.organization_id, u.created_at, u.id \n" +
+                "ORDER BY u.lastName, u.firstName, u.email", organizationId);
 
         return mapToList(rows, row -> {
 
@@ -160,16 +166,18 @@ public class FrontendDao {
     public void createOrganization(Organization org) {
 
         db.update("INSERT INTO organization (id, name_en, name_fi, name_sv, description_en, description_fi, description_sv, url) VALUES (?,?,?,?,?,?,?,?)",
-                org.id, org.nameEn, org.nameFi, org.nameSv, org.descriptionEn, org.descriptionFi, org.descriptionSv, org.url);
+            org.id, org.nameEn, org.nameFi, org.nameSv, org.descriptionEn, org.descriptionFi, org.descriptionSv, org.url);
     }
 
     public void updateOrganization(Organization org) {
 
         db.update("UPDATE organization SET name_en=?, name_fi=?, name_sv=?, description_en=?, description_fi=?, description_sv=?, url=?, removed=?, modified=now() WHERE id = ?",
-                org.nameEn, org.nameFi, org.nameSv, org.descriptionEn, org.descriptionFi, org.descriptionSv, org.url, org.removed, org.id);
+            org.nameEn, org.nameFi, org.nameSv, org.descriptionEn, org.descriptionFi, org.descriptionSv, org.url, org.removed, org.id);
     }
 
-    public void addUserToRoleInOrganization(String userEmail, String role, UUID id) {
+    public void addUserToRoleInOrganization(String userEmail,
+                                            String role,
+                                            UUID id) {
         db.update("INSERT INTO user_organization (user_id, organization_id, role_name) VALUES ((select id from \"user\" where email = ?), ?, ?)", userEmail, id, role);
         updateOrganizationModifiedStamp(id);
     }
@@ -180,31 +188,33 @@ public class FrontendDao {
     }
 
     public @NotNull List<String> getAllRoles() {
-        return db.findAll(String.class,"SELECT name FROM role");
+        return db.findAll(String.class, "SELECT name FROM role");
     }
 
-    public String getOrganizationNameFI(UUID id ) { return db.findUnique(String.class,"SELECT name_fi FROM organization WHERE id=?", id);}
+    public String getOrganizationNameFI(UUID id) {
+        return db.findUnique(String.class, "SELECT name_fi FROM organization WHERE id=?", id);
+    }
 
     public void addUserRequest(UserRequestModel userRequest) {
         logger.info("AddUserRequest 1");
         // Log new user id
         db.update("INSERT INTO request (user_id, organization_id, role_name, sent) VALUES ((select id from \"user\" where email = ?),?,?,?)",
-                userRequest.email, userRequest.organizationId, userRequest.role, false);
+            userRequest.email, userRequest.organizationId, userRequest.role, false);
         // Log newly created  user id
         logger.info("AddUserRequest 2");
         @NotNull List<UUID> userIds = db.findAll(UUID.class, "SELECT id from user where email = ?", userRequest.email);
-        if(userIds != null && userIds.size() == 1){
-            logger.info("AddNewUser id:"+userIds.get(0).toString());
+        if (userIds != null && userIds.size() == 1) {
+            logger.info("AddNewUser id:" + userIds.get(0).toString());
         }
     }
 
     public @NotNull List<UserRequestWithOrganization> getAllUserRequestsForOrganizations(@Nullable Set<UUID> organizations) {
 
         QueryBuilder builder = new QueryBuilder(
-                "SELECT r.id, us.email as user_email, r.organization_id, r.role_name, us.firstName, us.lastName, org.name_fi, org.name_en, org.name_sv, r.sent \n" +
-                        "FROM request r\n" +
-                        "LEFT JOIN \"user\" us ON (us.id = r.user_id)\n" +
-                        "LEFT JOIN organization org ON (org.id = r.organization_id)\n");
+            "SELECT r.id, us.email as user_email, r.organization_id, r.role_name, us.firstName, us.lastName, org.name_fi, org.name_en, org.name_sv, r.sent \n" +
+                "FROM request r\n" +
+                "LEFT JOIN \"user\" us ON (us.id = r.user_id)\n" +
+                "LEFT JOIN organization org ON (org.id = r.organization_id)\n");
 
         if (organizations != null) {
             builder.append("WHERE r.organization_id in (").appendPlaceholders(organizations).append(")");
@@ -219,9 +229,9 @@ public class FrontendDao {
 
     public @NotNull UserRequest getUserRequest(int requestId) {
         return db.findUnique(UserRequest.class,
-                "SELECT r.id, u.email as user_email, r.user_id, r.organization_id, r.role_name, r.sent FROM request r \n" +
-                        "LEFT JOIN \"user\" u on (u.id = r.user_id) \n" +
-                        "WHERE r.id = ?", requestId);
+            "SELECT r.id, u.email as user_email, r.user_id, r.organization_id, r.role_name, r.sent FROM request r \n" +
+                "LEFT JOIN \"user\" u on (u.id = r.user_id) \n" +
+                "WHERE r.id = ?", requestId);
     }
 
     void updateOrganizationModifiedStamp(UUID orgId) {

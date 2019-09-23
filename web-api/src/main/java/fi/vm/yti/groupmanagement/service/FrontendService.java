@@ -140,8 +140,7 @@ public class FrontendService {
         YtiUser user = userProvider.getUser();
         if(user.isSuperuser() && !user.getEmail().equals(email)) {
             logger.info("Removing user from group management!");
-            frontendDao.removeUser(email);
-            return true;
+            return frontendDao.removeUser(email);
         } else return false;
     }
 
