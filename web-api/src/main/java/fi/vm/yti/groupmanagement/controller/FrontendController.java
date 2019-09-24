@@ -102,6 +102,12 @@ public class FrontendController {
         return this.frontendService.getUsers();
     }
 
+    @RequestMapping(value = "/testUsers", method = GET, produces = APPLICATION_JSON_VALUE)
+    public List<UserWithRolesInOrganizations> getTestUsers() {
+        logger.info("getTestUsers requested");
+        return this.frontendService.getTestUsers();
+    }
+
     @RequestMapping(value = "/removeuser/{email}/", method = POST)
     public Boolean removeUser(@PathVariable("email") String email) {
         return this.frontendService.removeUser(email);

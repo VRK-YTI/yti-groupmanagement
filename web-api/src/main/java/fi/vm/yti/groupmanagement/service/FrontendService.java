@@ -136,6 +136,17 @@ public class FrontendService {
     }
 
     @Transactional
+    public List<UserWithRolesInOrganizations> getTestUsers() {
+        YtiUser user = this.userProvider.getUser();
+        if (authorizationManager.canBrowseUsers()) {
+                return frontendDao.getPublicUsers();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+
+    @Transactional
     public boolean removeUser(String email) {
         YtiUser user = userProvider.getUser();
         if(user.isSuperuser() && !user.getEmail().equals(email)) {

@@ -28,6 +28,11 @@ export class ApiService {
       users.map(userModel => new User(userModel))));
   }
 
+  getTestUsers(): Observable<User[]> {
+    return this.endpoint.getTestUsers().pipe(map(users =>
+      users.map(userModel => new User(userModel))));
+  }
+
   getUsers(): Observable<User[]> {
     return this.endpoint.getUsers().pipe(map(users =>
       users.map(userModel => new User(userModel))));

@@ -103,8 +103,7 @@ export class NavigationBarComponent {
               private apiService: ApiService,
               public configService: ConfigurationService) {
 
-
-    apiService.getUsers().subscribe(users => {
+    apiService.getTestUsers().subscribe(users => {
       if (this.configService.fakeLoginAllowed) {
         this.fakeableUsers = users.map(u => ({email: u.email, firstName: u.firstName, lastName: u.lastName}));
       }
