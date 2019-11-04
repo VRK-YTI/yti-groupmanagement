@@ -1,17 +1,13 @@
 package fi.vm.yti.groupmanagement.service;
 
-import fi.vm.yti.groupmanagement.dao.PublicApiDao;
-import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
-import fi.vm.yti.groupmanagement.model.PublicApiUser;
-import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
-import org.jetbrains.annotations.NotNull;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import fi.vm.yti.groupmanagement.dao.PublicApiDao;
+import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
 
 @Service
 public class PrivateApiService {
