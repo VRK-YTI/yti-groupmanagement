@@ -8,7 +8,8 @@ public final class PublicApiUserRequest {
     private final UUID organizationId;
     private final List<String> role;
 
-    public PublicApiUserRequest(UUID organizationId, List<String> role) {
+    public PublicApiUserRequest(final UUID organizationId,
+                                final List<String> role) {
         this.organizationId = organizationId;
         this.role = role;
     }

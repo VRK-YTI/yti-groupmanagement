@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-06-18 12:06+0300\n"
+"PO-Revision-Date: 2019-11-07 15:11+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -27,6 +27,12 @@ msgstr "Kyllä"
 
 msgid "Cancel"
 msgstr "Peruuta"
+
+msgid "Copy value to clipboard"
+msgstr "Kopioi {{value}} leikepöydälle"
+
+msgid "Copied to clipboard"
+msgstr "Kopioitu leikepöydälle"
 
 msgid "ORGANIZATIONS"
 msgstr "ORGANISAATIOT"
@@ -139,6 +145,18 @@ msgstr "Hae käyttäjää"
 msgid "Select user"
 msgstr "Valitse käyttäjä"
 
+msgid "API token"
+msgstr "API-avain"
+
+msgid "This user has a token already."
+msgstr "Tällä käyttäjällä on jo API-avain."
+
+msgid "Create API token"
+msgstr "Luo API-avain"
+
+msgid "Delete API token"
+msgstr "Poista API-avain"
+
 msgid "Organizations and roles"
 msgstr "Organisaatio ja roolit"
 
@@ -157,11 +175,11 @@ msgstr "Hyväksy"
 msgid "SuperUser"
 msgstr "Pääkäyttäjä"
 
+msgid "MEMBER"
+msgstr "Jäsen"
+
 msgid "Front page"
 msgstr "Etusivu"
-
-msgid "ADMIN"
-msgstr "Pääkäyttäjä"
 
 msgid "DATA_MODEL_EDITOR"
 msgstr "Tietomallintaja"
@@ -172,8 +190,8 @@ msgstr "Sanastotyöntekijä"
 msgid "CODE_LIST_EDITOR"
 msgstr "Koodistotyöntekijä"
 
-msgid "MEMBER"
-msgstr "Jäsen"
+msgid "ADMIN"
+msgstr "Pääkäyttäjä"
 
 msgid "All roles"
 msgstr "Kaikki roolit"
@@ -181,8 +199,18 @@ msgstr "Kaikki roolit"
 msgid "All organizations"
 msgstr "Kaikki organisaatiot"
 
-msgid "This user will be removed from organization after the changes are saved."
+msgid ""
+"This user will be removed from organization after the changes are saved."
 msgstr "Tämä käyttäjä poistetaan organisaatiosta kun muutokset talletetaan."
 
 msgid "This user will be removed."
 msgstr "Tämä käyttäjä poistetaan."
+
+msgid "INFO_TEXT_TOKEN"
+msgstr ""
+"Luodulla API-avaimella voit tehdä autentikoituja rajapintakutsuja "
+"asettamalla avaimen arvon HTTP otsikkotiedon “Authorization” arvoksi "
+"“Bearer”-etuliitteellä."
+
+#~ msgid "Token"
+#~ msgstr "API avain"

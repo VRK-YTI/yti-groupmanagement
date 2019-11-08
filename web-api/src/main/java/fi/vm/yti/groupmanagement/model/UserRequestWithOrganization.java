@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public class UserRequestWithOrganization {
 
+    public final HashMap<String, String> organizationName = new HashMap<>(3);
     public Integer id;
     public String email;
     public UUID organizationId;
@@ -12,10 +13,17 @@ public class UserRequestWithOrganization {
     public String firstName;
     public String lastName;
     public boolean sent = false;
-    public final HashMap<String, String> organizationName = new HashMap<>(3);
 
-    public UserRequestWithOrganization(Integer id, String userEmail, UUID organizationId, String roleName, String firstName, String lastName,
-                            String orgNameFi, String orgNameEn, String orgNameSv, Boolean sent) {
+    public UserRequestWithOrganization(final Integer id,
+                                       final String userEmail,
+                                       final UUID organizationId,
+                                       final String roleName,
+                                       final String firstName,
+                                       final String lastName,
+                                       final String orgNameFi,
+                                       final String orgNameEn,
+                                       final String orgNameSv,
+                                       final Boolean sent) {
 
         organizationName.put("fi", orgNameFi);
         organizationName.put("en", orgNameEn);

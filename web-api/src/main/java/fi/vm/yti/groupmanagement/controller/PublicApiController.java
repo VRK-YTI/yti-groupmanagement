@@ -1,10 +1,8 @@
 package fi.vm.yti.groupmanagement.controller;
 
-import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
-import fi.vm.yti.groupmanagement.model.PublicApiUser;
-import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
-import fi.vm.yti.groupmanagement.service.PublicApiService;
+import java.util.List;
+import java.util.UUID;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.UUID;
-
+import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
+import fi.vm.yti.groupmanagement.model.PublicApiUser;
+import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
+import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
+import fi.vm.yti.groupmanagement.service.PublicApiService;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -29,17 +29,16 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/public-api")
 public class PublicApiController {
 
-    private final PublicApiService publicApiService;
     private static final Logger logger = LoggerFactory.getLogger(PublicApiController.class);
+    private final PublicApiService publicApiService;
 
     public PublicApiController(PublicApiService publicApiService) {
         this.publicApiService = publicApiService;
     }
 
-
-    @RequestMapping(value = "/user", method = POST, produces = APPLICATION_JSON_VALUE, consumes= APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/user", method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_UTF8_VALUE)
     public PublicApiUser getUserByEmail(@RequestBody NewUser newUser) {
-        logger.info("GET /user requested");
+        logger.info("POST /user requested");
 
         if (newUser.email.isEmpty()) {
             throw new RuntimeException("Email is a mandatory parameter");
@@ -67,7 +66,7 @@ public class PublicApiController {
     }
 
     @RequestMapping(value = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PublicApiUserListItem>> getUsers( @RequestHeader(value="If-Modified-Since", required=false) String ifModifiedSince) {
+    public ResponseEntity<List<PublicApiUserListItem>> getUsers(@RequestHeader(value = "If-Modified-Since", required = false) String ifModifiedSince) {
         logger.info("GET /users requested");
 
         if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
@@ -77,34 +76,35 @@ public class PublicApiController {
             } else {
                 return new ResponseEntity<>(users, HttpStatus.NOT_MODIFIED);
             }
-        }
-        else return new ResponseEntity<>(this.publicApiService.getUsers(), HttpStatus.OK);
+        } else return new ResponseEntity<>(this.publicApiService.getUsers(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/organizations", method = GET, produces = APPLICATION_JSON_VALUE)
     @CrossOrigin
-    public ResponseEntity<List<PublicApiOrganization>> getOrganizations(@RequestParam(value="onlyValid", required=false, defaultValue = "false") boolean onlyValid,
-                                                                        @RequestParam(value="ifModifiedSince", required=false) String ifModifiedSinceParam,
-                                                                        @RequestHeader(value="If-Modified-Since", required=false) String ifModifiedSince) {
+    public ResponseEntity<List<PublicApiOrganization>> getOrganizations(@RequestParam(value = "onlyValid", required = false, defaultValue = "false") boolean onlyValid,
+                                                                        @RequestParam(value = "ifModifiedSince", required = false) String ifModifiedSinceParam,
+                                                                        @RequestHeader(value = "If-Modified-Since", required = false) String ifModifiedSince) {
         logger.info("GET /organizations requested");
 
-        if(ifModifiedSince==null && ifModifiedSinceParam!=null && !ifModifiedSinceParam.isEmpty()) ifModifiedSince = ifModifiedSinceParam;
+        if (ifModifiedSince == null && ifModifiedSinceParam != null && !ifModifiedSinceParam.isEmpty())
+            ifModifiedSince = ifModifiedSinceParam;
 
         if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            List<PublicApiOrganization> organizations = publicApiService.getModifiedOrganizations(ifModifiedSince,onlyValid);
+            List<PublicApiOrganization> organizations = publicApiService.getModifiedOrganizations(ifModifiedSince, onlyValid);
             if (organizations.size() > 0) {
                 return new ResponseEntity<>(organizations, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(organizations, HttpStatus.NOT_MODIFIED);
             }
-        }
-        else return new ResponseEntity<>(onlyValid ? publicApiService.getValidOrganizations() : publicApiService.getOrganizations(), HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(onlyValid ? publicApiService.getValidOrganizations() : publicApiService.getOrganizations(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/request", method = POST)
     public void addUserRequest(@RequestParam String email,
                                @RequestParam UUID organizationId,
                                @RequestParam String role) {
+        // TODO: Parse user email from actual user instead of query parameter
         logger.info("POST /request requested for organization id: " + organizationId + " for role: " + role);
         this.publicApiService.addUserRequest(email, organizationId, role);
     }
@@ -116,7 +116,8 @@ public class PublicApiController {
     }
 }
 
-class NewUser{
+class NewUser {
+
     public String email;
     public String firstName;
     public String lastName;

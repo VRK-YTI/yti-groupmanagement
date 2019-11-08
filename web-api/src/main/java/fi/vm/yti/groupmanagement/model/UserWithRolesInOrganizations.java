@@ -15,7 +15,14 @@ public class UserWithRolesInOrganizations {
     public LocalDateTime removalDateTime;
     public List<OrganizationRoles> organizations;
 
-    public UserWithRolesInOrganizations(String email, String firstName, String lastName, boolean superuser, UUID userId, LocalDateTime creationDateTime, LocalDateTime removalDateTime, List<OrganizationRoles> organizations) {
+    public UserWithRolesInOrganizations(final String email,
+                                        final String firstName,
+                                        final String lastName,
+                                        final boolean superuser,
+                                        final UUID userId,
+                                        final LocalDateTime creationDateTime,
+                                        final LocalDateTime removalDateTime,
+                                        final List<OrganizationRoles> organizations) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -31,7 +38,8 @@ public class UserWithRolesInOrganizations {
         public UUID id;
         public List<String> roles;
 
-        public OrganizationRoles(UUID id, List<String> roles) {
+        public OrganizationRoles(final UUID id,
+                                 final List<String> roles) {
             this.id = id;
             this.roles = roles;
         }

@@ -19,6 +19,12 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+msgid "Copy value to clipboard"
+msgstr ""
+
+msgid "Copied to clipboard"
+msgstr ""
+
 msgid "ORGANIZATIONS"
 msgstr ""
 
@@ -130,6 +136,18 @@ msgstr ""
 msgid "Select user"
 msgstr ""
 
+msgid "API token"
+msgstr ""
+
+msgid "This user has a token already."
+msgstr ""
+
+msgid "Create API token"
+msgstr ""
+
+msgid "Delete API token"
+msgstr ""
+
 msgid "Organizations and roles"
 msgstr ""
 
@@ -148,10 +166,10 @@ msgstr ""
 msgid "SuperUser"
 msgstr ""
 
-msgid "Front page"
+msgid "MEMBER"
 msgstr ""
 
-msgid "ADMIN"
+msgid "Front page"
 msgstr ""
 
 msgid "DATA_MODEL_EDITOR"
@@ -163,7 +181,7 @@ msgstr ""
 msgid "CODE_LIST_EDITOR"
 msgstr ""
 
-msgid "MEMBER"
+msgid "ADMIN"
 msgstr ""
 
 msgid "All roles"
@@ -176,4 +194,7 @@ msgid "This user will be removed from organization after the changes are saved."
 msgstr ""
 
 msgid "This user will be removed."
+msgstr ""
+
+msgid "INFO_TEXT_TOKEN"
 msgstr ""

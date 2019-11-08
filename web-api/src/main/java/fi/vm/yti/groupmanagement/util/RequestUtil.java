@@ -1,27 +1,29 @@
 package fi.vm.yti.groupmanagement.util;
 
-import org.jetbrains.annotations.NotNull;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.jetbrains.annotations.NotNull;
 
 public final class RequestUtil {
 
     private RequestUtil() {
     }
 
-    public static @NotNull String createLoginUrl(@NotNull HttpServletRequest request, @NotNull  String url) {
+    public static @NotNull String createLoginUrl(@NotNull final HttpServletRequest request,
+                                                 @NotNull final String url) {
         return getRequestUrlExcludingPath(request) + "/Shibboleth.sso/Login?target=" + urlEncode(url);
     }
 
-    private static @NotNull String getRequestUrlExcludingPath(@NotNull HttpServletRequest req) {
+    private static @NotNull String getRequestUrlExcludingPath(@NotNull final HttpServletRequest req) {
 
-        String scheme = req.getScheme();
-        String serverName = req.getServerName();
-        int serverPort = req.getServerPort();
+        final String scheme = req.getScheme();
+        final String serverName = req.getServerName();
+        final int serverPort = req.getServerPort();
 
-        StringBuilder url = new StringBuilder();
+        final StringBuilder url = new StringBuilder();
         url.append(scheme).append("://").append(serverName);
 
         if (serverPort != 80 && serverPort != 443) {
@@ -31,7 +33,7 @@ public final class RequestUtil {
         return url.toString();
     }
 
-    private static @NotNull String urlEncode(@NotNull String s) {
+    private static @NotNull String urlEncode(@NotNull final String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {

@@ -7,6 +7,7 @@ import {
   Organization,
   OrganizationListItem,
   OrganizationWithUsers,
+  TokenModel,
   UpdateOrganization,
   UserRequestModel,
   UserRequestWithOrganization,
@@ -112,5 +113,13 @@ export class ApiService {
 
   getConfiguration(): Observable<ConfigurationModel> {
     return this.endpoint.getConfiguration();
+  }
+
+  createToken(): Observable<TokenModel> {
+    return this.endpoint.createToken();
+  }
+
+  deleteToken(): Observable<boolean> {
+    return this.endpoint.deleteToken();
   }
 }

@@ -9,7 +9,10 @@ public class PublicApiUserListItem {
     private final String lastName;
     private final UUID id;
 
-    public PublicApiUserListItem(String email, String firstName, String lastName, UUID id) {
+    public PublicApiUserListItem(final String email,
+                                 final String firstName,
+                                 final String lastName,
+                                 final UUID id) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -28,5 +31,7 @@ public class PublicApiUserListItem {
         return lastName;
     }
 
-    public UUID getId() { return id; }
+    public UUID getId() {
+        return id;
+    }
 }

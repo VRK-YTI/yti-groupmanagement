@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.yti.groupmanagement.dao.PublicApiDao;
 import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
+import fi.vm.yti.groupmanagement.model.TokenModel;
+import fi.vm.yti.security.YtiUser;
 
 @Service
 public class PrivateApiService {
@@ -27,5 +29,10 @@ public class PrivateApiService {
     @Transactional
     public List<PublicApiUserListItem> getModifiedUsers(String ifModifiedSince) {
         return this.publicApiDao.getModifiedUsers(ifModifiedSince);
+    }
+
+    @Transactional
+    public YtiUser validateToken(final TokenModel token) {
+        return this.publicApiDao.validateToken(token);
     }
 }

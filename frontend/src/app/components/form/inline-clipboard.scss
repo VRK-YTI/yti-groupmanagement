@@ -1,0 +1,13 @@
+img.svg-icon {
+  max-width: 14px;
+  max-height: 14px;
+}
+
+.clipboard {
+  padding-left: 0.3em;
+  max-width: 1000px; //just to override a smaller, general value of 14px. Otherwise, due to padding, size is too small.
+}
+
+.link {
+  overflow-wrap: break-word;
+}
