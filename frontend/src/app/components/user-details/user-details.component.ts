@@ -1,148 +1,118 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
-import { OrganizationListItem } from '../../apina';
 import { LanguageService } from '../../services/language.service';
 import { LocationService } from '../../services/location.service';
-import { Role, UserService } from 'yti-common-ui/services/user.service';
-import { index } from 'yti-common-ui/utils/array';
-import { comparingLocalizable } from 'yti-common-ui/utils/comparator';
-
-interface UserOrganizationRoles {
-  organization?: OrganizationListItem;
-  roles: Role[];
-}
+import { UserService } from 'yti-common-ui/services/user.service';
+import { NgbTabChangeEvent, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { MessagingResource } from '../../entities-messaging/messaging-resource';
+import { BehaviorSubject } from 'rxjs';
+import { MessagingService } from '../../services/messaging-service';
+import { ConfigurationService } from '../../services/configuration.service';
 
 @Component({
   selector: 'app-user-details',
-  template: `
-    <div class="content-box" *ngIf="!loading">
-
-      <app-back-button id="back_button" (back)="back()"></app-back-button>
-
-      <div class="page-header">
-        <h1 translate>User details</h1>
-      </div>
-
-      <div class="form-group">
-        <label translate>Name</label>
-        <p class="form-control-static">{{user.name}}</p>
-      </div>
-
-      <div class="form-group">
-        <label translate>Email</label>
-        <p class="form-control-static">{{user.email}}</p>
-      </div>
-
-      <div class="form-group">
-        <label translate>API token</label>
-        <app-information-symbol [infoText]="'INFO_TEXT_TOKEN'"></app-information-symbol>
-        <app-inline-clipboard *ngIf="token"
-                              [showAsLink]="false"
-                              [value]="token"></app-inline-clipboard>
-        <div *ngIf="hasExistingToken" class="mb-2">
-          <span translate>This user has a token already.</span>
-        </div>
-        <div>
-          <button *ngIf="!hasToken"
-                  type="button"
-                  id="create_token_button"
-                  class="btn btn-action"
-                  (click)="createToken()" translate>Create API token</button>
-          <button *ngIf="hasToken"
-                  type="button"
-                  id="delete_token_button"
-                  class="btn btn-action"
-                  (click)="deleteToken()" translate>Delete API token</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label translate>Organizations and roles</label>
-        <div class="form-control-static">
-          <div *ngFor="let userOrganization of userOrganizations">
-            <div *ngIf="userOrganization.organization">{{userOrganization.organization.name | translateValue}}</div>
-            <div *ngIf="!userOrganization.organization" translate>Unknown organization</div>
-            <ul>
-              <li *ngFor="let role of userOrganization.roles">{{role | translate}}</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
+  styleUrls: ['./user-details.component.scss'],
+  templateUrl: './user-details.component.html',
 })
-export class UserDetailsComponent {
+export class UserDetailsComponent implements OnInit {
 
-  allOrganizationsById: Map<string, OrganizationListItem>;
-  token: string | undefined = undefined;
-  tokenDeleted = false;
+  @ViewChild('tabSet') tabSet: NgbTabset;
+
+  APPLICATION_CODELIST = 'codelist';
+  APPLICATION_TERMINOLOGY = 'terminology';
+  APPLICATION_DATAMODEL = 'datamodel';
+  APPLICATION_COMMENTS = 'comments';
+
+  loading = true;
+
+  messagingResources$ = new BehaviorSubject<Map<string, MessagingResource[]> | null>(null);
 
   constructor(private router: Router,
               private userService: UserService,
-              private apiService: ApiService,
               private languageService: LanguageService,
-              locationService: LocationService) {
+              locationService: LocationService,
+              private messagingService: MessagingService,
+              private configurationService: ConfigurationService) {
 
     locationService.atUserDetails();
+  }
 
-    apiService.getOrganizationList().subscribe(organizations => {
-      this.allOrganizationsById = index(organizations, org => org.id as string);
+  ngOnInit() {
+
+    if (this.configurationService.isMessagingEnabled && this.userService.isLoggedIn()) {
+      this.getUserSubscriptionData();
+      console.log('found resources, quit loading');
+    } else {
+      this.loading = false;
+      console.log('did not find resources, quit loading');
+    }
+  }
+
+  getUserSubscriptionData() {
+
+    this.loading = true;
+
+    this.messagingService.getMessagingUserData().subscribe(messagingUserData => {
+      if (messagingUserData) {
+        const resources = new Map<string, MessagingResource[]>();
+        const codelistMessagingResources: MessagingResource[] = [];
+        const datamodelMessagingResources: MessagingResource[] = [];
+        const terminologyMessagingResources: MessagingResource[] = [];
+        const commentsMessagingResources: MessagingResource[] = [];
+
+        messagingUserData.resources.forEach(resource => {
+          if (resource.application === this.APPLICATION_CODELIST) {
+            codelistMessagingResources.push(resource);
+          } else if (resource.application === this.APPLICATION_DATAMODEL) {
+            datamodelMessagingResources.push(resource);
+          } else if (resource.application === this.APPLICATION_TERMINOLOGY) {
+            terminologyMessagingResources.push(resource);
+          } else if (resource.application === this.APPLICATION_COMMENTS) {
+            commentsMessagingResources.push(resource);
+          }
+        });
+        if (codelistMessagingResources.length > 0) {
+          resources.set(this.APPLICATION_CODELIST, codelistMessagingResources);
+        }
+        if (datamodelMessagingResources.length > 0) {
+          resources.set(this.APPLICATION_DATAMODEL, datamodelMessagingResources);
+        }
+        if (terminologyMessagingResources.length > 0) {
+          resources.set(this.APPLICATION_TERMINOLOGY, terminologyMessagingResources);
+        }
+        if (commentsMessagingResources.length > 0) {
+          resources.set(this.APPLICATION_COMMENTS, commentsMessagingResources);
+        }
+        if (resources.size > 0) {
+          this.messagingResources = resources;
+        } else {
+          this.messagingResources = null;
+        }
+      } else {
+        this.messagingResources = null;
+      }
+      this.loading = false;
     });
+  }
+
+  onTabChange(event: NgbTabChangeEvent) {
+
+    if (event.nextId === 'user_details_info_tab') {
+      this.getUserSubscriptionData();
+    }
+  }
+
+  get messagingResources(): Map<string, MessagingResource[]> | null {
+
+    return this.messagingResources$.getValue();
+  }
+
+  set messagingResources(value: Map<string, MessagingResource[]> | null) {
+
+    this.messagingResources$.next(value);
   }
 
   get user() {
     return this.userService.user;
-  }
-
-  get hasExistingToken(): boolean {
-    return this.userService.user.hasToken && this.token === undefined && !this.tokenDeleted;
-  }
-
-  get hasToken(): boolean {
-    return this.token !== undefined || this.hasExistingToken;
-  }
-
-  get loading() {
-    return !this.allOrganizationsById;
-  }
-
-  get userOrganizations(): UserOrganizationRoles[] {
-
-    const result = Array.from(this.user.rolesInOrganizations.entries()).map(([organizationId, roles]) => {
-      return {
-        organization: this.allOrganizationsById.get(organizationId),
-        roles: Array.from(roles)
-      };
-    });
-
-    result.sort(comparingLocalizable<UserOrganizationRoles>(this.languageService, org => org.organization ? org.organization.name : {}));
-
-    return result;
-  }
-
-  createToken() {
-
-    this.apiService.createToken().subscribe(token => {
-      if (token) {
-        this.token = token.token;
-      } else {
-        this.token = undefined;
-      }
-    })
-  }
-
-  deleteToken() {
-
-    this.apiService.deleteToken().subscribe(boolean => {
-      if (boolean) {
-        this.token = undefined;
-        this.tokenDeleted = true;
-      }
-    })
-  }
-
-  back() {
-    this.router.navigate(['/']);
   }
 }

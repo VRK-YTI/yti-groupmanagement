@@ -163,6 +163,7 @@ public class FrontendController {
         model.env = this.applicationProperties.getEnv();
         model.fakeLoginAllowed = this.applicationProperties.isFakeLoginAllowed();
         model.impersonateAllowed = impersonateProperties.isAllowed();
+        model.messagingEnabled = this.applicationProperties.isMessagingEnabled();
 
         return model;
     }

@@ -10,4 +10,5 @@ public class ConfigurationModel {
     public String env;
     public boolean fakeLoginAllowed;
     public boolean impersonateAllowed;
+    public boolean messagingEnabled;
 }

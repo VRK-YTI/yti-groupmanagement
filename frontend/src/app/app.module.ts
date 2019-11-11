@@ -32,6 +32,8 @@ import { of } from 'rxjs';
 import { ConfigurationService } from "./services/configuration.service";
 import { InlineClipboardComponent } from './components/form/inline-clipboard';
 import { ClipboardModule } from 'ngx-clipboard';
+import { UserDetailsInformationComponent } from './components/user-details/user-details-information.component';
+import { UserDetailsSubscriptionsComponent } from './components/user-details/user-details-subscriptions.component';
 
 function removeEmptyValues(obj: {}) {
 
@@ -144,6 +146,8 @@ const appRoutes: Routes = [
     OrganizationDetailsComponent,
     UserRequestsComponent,
     UserDetailsComponent,
+    UserDetailsInformationComponent,
+    UserDetailsSubscriptionsComponent,
     DeleteConfirmationModalComponent,
     OrganizationComponent,
     FormatDateTimePipe,

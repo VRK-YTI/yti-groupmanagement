@@ -1,0 +1,52 @@
+<div *ngIf="loading">
+  <app-ajax-loading-indicator></app-ajax-loading-indicator>
+</div>
+
+<div *ngIf="!loading">
+  <div class="form-group">
+    <label translate>Name</label>
+    <p class="form-control-static">{{user.name}}</p>
+  </div>
+
+  <div class="form-group">
+    <label translate>Email</label>
+    <p class="form-control-static">{{user.email}}</p>
+  </div>
+
+  <div class="form-group">
+    <label translate>Organizations and roles</label>
+    <div class="form-control-static">
+      <div *ngFor="let userOrganization of userOrganizations">
+        <div *ngIf="userOrganization.organization">{{userOrganization.organization.name | translateValue}}</div>
+        <div *ngIf="!userOrganization.organization" translate>Unknown organization</div>
+        <ul>
+          <li *ngFor="let role of userOrganization.roles">{{role | translate}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label translate>API token</label>
+    <app-information-symbol [infoText]="'INFO_TEXT_TOKEN'"></app-information-symbol>
+    <app-inline-clipboard *ngIf="token"
+                          [showAsLink]="false"
+                          [value]="token"></app-inline-clipboard>
+    <div *ngIf="hasExistingToken" class="mb-2">
+      <span translate>This user has a token already.</span>
+    </div>
+    <div>
+      <button *ngIf="!hasToken"
+              type="button"
+              id="create_token_button"
+              class="btn btn-action"
+              (click)="createToken()" translate>Create API token</button>
+      <button *ngIf="hasToken"
+              type="button"
+              id="delete_token_button"
+              class="btn btn-action"
+              (click)="deleteToken()" translate>Delete API token</button>
+    </div>
+  </div>
+
+</div>
