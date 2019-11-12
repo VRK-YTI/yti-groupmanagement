@@ -17,6 +17,27 @@ public final class UserRow {
                    LocalDateTime creationDateTime,
                    UUID userId,
                    LocalDateTime removalDateTime,
+                   List<String> roles) {
+
+        this.user.email = email;
+        this.user.firstName = firstName;
+        this.user.lastName = lastName;
+        this.user.superuser = superuser;
+        this.user.id = userId;
+        this.organization.id = organizationId;
+        this.user.creationDateTime = creationDateTime;
+        this.user.removalDateTime = removalDateTime;
+        this.organization.roles = roles;
+    }
+
+    public UserRow(String email,
+                   String firstName,
+                   String lastName,
+                   boolean superuser,
+                   UUID organizationId,
+                   LocalDateTime creationDateTime,
+                   UUID userId,
+                   LocalDateTime removalDateTime,
                    LocalDateTime tokenCreatedAt,
                    LocalDateTime tokenInvalidationAt,
                    List<String> roles) {
