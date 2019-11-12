@@ -17,6 +17,8 @@ public final class UserRow {
                    LocalDateTime creationDateTime,
                    UUID userId,
                    LocalDateTime removalDateTime,
+                   LocalDateTime tokenCreatedAt,
+                   LocalDateTime tokenInvalidationAt,
                    List<String> roles) {
 
         this.user.email = email;
@@ -27,6 +29,8 @@ public final class UserRow {
         this.organization.id = organizationId;
         this.user.creationDateTime = creationDateTime;
         this.user.removalDateTime = removalDateTime;
+        this.user.tokenCreatedAt = tokenCreatedAt;
+        this.user.tokenInvalidationAt = tokenInvalidationAt;
         this.organization.roles = roles;
     }
 
@@ -38,6 +42,8 @@ public final class UserRow {
         LocalDateTime creationDateTime;
         boolean superuser;
         LocalDateTime removalDateTime;
+        LocalDateTime tokenCreatedAt;
+        LocalDateTime tokenInvalidationAt;
         UUID id;
 
         @Override

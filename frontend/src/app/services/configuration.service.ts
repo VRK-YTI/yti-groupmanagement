@@ -28,6 +28,10 @@ export class ConfigurationService {
     return this.configuration.env;
   }
 
+  get isMessagingEnabled(): boolean {
+    return this.configuration.messagingEnabled;
+  }
+
   get terminologyUrl(): string {
     return this.configuration.terminologyUrl;
   }
@@ -46,6 +50,14 @@ export class ConfigurationService {
 
   get fakeLoginAllowed(): boolean {
     return this.configuration.fakeLoginAllowed;
+  }
+
+  getUriWithEnv(uri: string): string | null {
+
+    if (uri && this.env !== 'prod') {
+      return uri + '?env=' + this.env;
+    }
+    return uri ? uri : null;
   }
 
   getEnvironmentIdentifier(style?: 'prefix' | 'postfix'): string {

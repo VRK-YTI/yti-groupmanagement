@@ -44,7 +44,7 @@ public class AuthorizationManager {
         return this.fakeLoginAllowed || getUser().isSuperuser() || getUser().isInRoleInAnyOrganization(ADMIN);
     }
 
-    private @NotNull YtiUser getUser() {
+    public @NotNull YtiUser getUser() {
         return userProvider.getUser();
     }
 }

@@ -9,7 +9,8 @@ public final class PublicApiUserOrganization {
     private final UUID uuid;
     private final List<String> role;
 
-    public PublicApiUserOrganization(UUID uuid, List<String> role) {
+    public PublicApiUserOrganization(final UUID uuid,
+                                     final List<String> role) {
         this.uuid = uuid;
         this.role = Collections.unmodifiableList(role);
     }

@@ -3,12 +3,7 @@ import { APP_INITIALIZER, Injectable, NgModule } from '@angular/core';
 import { CanDeactivate, ResolveEnd, Router, RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import {
-  MissingTranslationHandler,
-  MissingTranslationHandlerParams,
-  TranslateLoader,
-  TranslateModule
-} from '@ngx-translate/core';
+import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { AppComponent } from './components/app.component';
 import { ApinaConfig, ApinaModule } from './apina';
 import { FrontpageComponent } from './components/frontpage.component';
@@ -24,11 +19,8 @@ import { AuthorizationManager } from './services/authorization-manager.service';
 import { UserRequestsComponent } from './components/user-requests.component';
 import { ApiService } from './services/api.service';
 import { AUTHENTICATED_USER_ENDPOINT, LOCALIZER, YtiCommonModule } from 'yti-common-ui';
-import { UserDetailsComponent } from './components/user-details.component';
-import {
-  DeleteConfirmationModalComponent,
-  DeleteConfirmationModalService
-} from './components/delete-confirmation-modal.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { DeleteConfirmationModalComponent, DeleteConfirmationModalService } from './components/delete-confirmation-modal.component';
 import { OrganizationComponent } from './components/organization.component';
 import { ConfirmationModalService } from 'yti-common-ui/components/confirmation-modal.component';
 import { FormatDateTimePipe } from './pipes/format-date-time.pipe';
@@ -38,6 +30,10 @@ import { NavigationBarComponent } from './components/navigation/navigation-bar.c
 import { LogoComponent } from './components/navigation/logo.component';
 import { of } from 'rxjs';
 import { ConfigurationService } from "./services/configuration.service";
+import { InlineClipboardComponent } from './components/form/inline-clipboard';
+import { ClipboardModule } from 'ngx-clipboard';
+import { UserDetailsInformationComponent } from './components/user-details/user-details-information.component';
+import { UserDetailsSubscriptionsComponent } from './components/user-details/user-details-subscriptions.component';
 
 function removeEmptyValues(obj: {}) {
 
@@ -150,11 +146,14 @@ const appRoutes: Routes = [
     OrganizationDetailsComponent,
     UserRequestsComponent,
     UserDetailsComponent,
+    UserDetailsInformationComponent,
+    UserDetailsSubscriptionsComponent,
     DeleteConfirmationModalComponent,
     OrganizationComponent,
     FormatDateTimePipe,
     InformationAboutServiceComponent,
-    LogoComponent
+    LogoComponent,
+    InlineClipboardComponent
   ],
   entryComponents: [
     SearchUserModalComponent,
@@ -174,7 +173,8 @@ const appRoutes: Routes = [
       },
       missingTranslationHandler: { provide: MissingTranslationHandler, useFactory: createMissingTranslationHandler }
     }),
-    YtiCommonModule
+    YtiCommonModule,
+    ClipboardModule
   ],
   providers: [
     { provide: APP_INITIALIZER, useFactory: initApp, deps: [ConfigurationService], multi: true },

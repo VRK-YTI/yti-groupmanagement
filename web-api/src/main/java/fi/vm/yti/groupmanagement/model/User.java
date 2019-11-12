@@ -7,4 +7,6 @@ public class User {
     public String lastName;
     public String creationDateTime;
     public boolean superuser;
+    public String tokenCreatedAt;
+    public String tokenInvalidationAt;
 }

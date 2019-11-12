@@ -1,17 +1,18 @@
 package fi.vm.yti.groupmanagement.service;
 
-import fi.vm.yti.groupmanagement.dao.PublicApiDao;
-import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
-import fi.vm.yti.groupmanagement.model.PublicApiUser;
-import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
+import java.util.List;
+import java.util.UUID;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import fi.vm.yti.groupmanagement.dao.PublicApiDao;
+import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
+import fi.vm.yti.groupmanagement.model.PublicApiUser;
+import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
+import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
 
 @Service
 public class PublicApiService {
@@ -34,7 +35,9 @@ public class PublicApiService {
     }
 
     @Transactional
-    public @NotNull PublicApiUser getOrCreateUser(@NotNull String email, @NotNull String firstName, @NotNull String lastName) {
+    public @NotNull PublicApiUser getOrCreateUser(@NotNull final String email,
+                                                  @NotNull final String firstName,
+                                                  @NotNull final String lastName) {
 
         PublicApiUser user = publicApiDao.findUserByEmail(email);
 
@@ -52,8 +55,9 @@ public class PublicApiService {
     }
 
     @Transactional
-    public List<PublicApiOrganization> getModifiedOrganizations(String ifModifiedSince, boolean onlyValid) {
-        return publicApiDao.getModifiedOrganizations(ifModifiedSince,onlyValid);
+    public List<PublicApiOrganization> getModifiedOrganizations(final String ifModifiedSince,
+                                                                final boolean onlyValid) {
+        return publicApiDao.getModifiedOrganizations(ifModifiedSince, onlyValid);
     }
 
     @Transactional
@@ -62,12 +66,14 @@ public class PublicApiService {
     }
 
     @Transactional
-    public void addUserRequest(String email, UUID organizationId, String role) {
+    public void addUserRequest(final String email,
+                               final UUID organizationId,
+                               final String role) {
         publicApiDao.addUserRequest(email, organizationId, role);
     }
 
     @Transactional
-    public List<PublicApiUserRequest> getUserRequests(String email) {
+    public List<PublicApiUserRequest> getUserRequests(final String email) {
         return this.publicApiDao.getUserRequests(email);
     }
 
@@ -77,7 +83,7 @@ public class PublicApiService {
     }
 
     @Transactional
-    public List<PublicApiUserListItem> getModifiedUsers(String ifModifiedSince) {
+    public List<PublicApiUserListItem> getModifiedUsers(final String ifModifiedSince) {
         return this.publicApiDao.getModifiedUsers(ifModifiedSince);
     }
 }

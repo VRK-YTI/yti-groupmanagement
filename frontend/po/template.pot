@@ -19,6 +19,12 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+msgid "Copy value to clipboard"
+msgstr ""
+
+msgid "Copied to clipboard"
+msgstr ""
+
 msgid "ORGANIZATIONS"
 msgstr ""
 
@@ -130,12 +136,6 @@ msgstr ""
 msgid "Select user"
 msgstr ""
 
-msgid "Organizations and roles"
-msgstr ""
-
-msgid "Unknown organization"
-msgstr ""
-
 msgid "Access requests"
 msgstr ""
 
@@ -148,10 +148,57 @@ msgstr ""
 msgid "SuperUser"
 msgstr ""
 
-msgid "Front page"
+msgid "Organizations and roles"
 msgstr ""
 
-msgid "ADMIN"
+msgid "Unknown organization"
+msgstr ""
+
+msgid "API token"
+msgstr ""
+
+msgid "This user has a token already."
+msgstr ""
+
+msgid "Create API token"
+msgstr ""
+
+msgid "Delete API token"
+msgstr ""
+
+msgid ""
+"You have subscribed to be notified via email when the following resources "
+"change. To remove the subscription, click the icon next to the resource."
+msgstr ""
+
+msgid "Email notifications"
+msgstr ""
+
+msgid "Daily"
+msgstr ""
+
+msgid "Code list resources"
+msgstr ""
+
+msgid "Terminology resources"
+msgstr ""
+
+msgid "Datamodel resources"
+msgstr ""
+
+msgid "Comments resources"
+msgstr ""
+
+msgid "INFORMATION"
+msgstr ""
+
+msgid "SUBSCRIPTIONS"
+msgstr ""
+
+msgid "MEMBER"
+msgstr ""
+
+msgid "Front page"
 msgstr ""
 
 msgid "DATA_MODEL_EDITOR"
@@ -163,7 +210,7 @@ msgstr ""
 msgid "CODE_LIST_EDITOR"
 msgstr ""
 
-msgid "MEMBER"
+msgid "ADMIN"
 msgstr ""
 
 msgid "All roles"
@@ -176,4 +223,7 @@ msgid "This user will be removed from organization after the changes are saved."
 msgstr ""
 
 msgid "This user will be removed."
+msgstr ""
+
+msgid "INFO_TEXT_TOKEN"
 msgstr ""

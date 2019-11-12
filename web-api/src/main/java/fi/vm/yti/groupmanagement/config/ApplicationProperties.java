@@ -19,6 +19,7 @@ public final class ApplicationProperties {
     private boolean devMode;
     private String env;
     private boolean fakeLoginAllowed;
+    private boolean messagingEnabled;
 
     public String getCodeListUrl() {
         return codeListUrl;
@@ -69,4 +70,11 @@ public final class ApplicationProperties {
     public void setFakeLoginAllowed(boolean fakeLoginAllowed) {
         this.fakeLoginAllowed = fakeLoginAllowed; }
 
+    public boolean isMessagingEnabled() {
+        return messagingEnabled;
+    }
+
+    public void setMessagingEnabled(final boolean messagingEnabled) {
+        this.messagingEnabled = messagingEnabled;
+    }
 }

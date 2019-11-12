@@ -96,7 +96,6 @@ export class NavigationBarComponent {
   dataModelUrl: string;
   fakeLoginAllowed: boolean;
 
-
   constructor(private languageService: LanguageService,
               private userService: UserService,
               private loginModal: LoginModalService,

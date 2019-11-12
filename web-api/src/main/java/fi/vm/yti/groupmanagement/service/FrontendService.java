@@ -1,11 +1,9 @@
 package fi.vm.yti.groupmanagement.service;
 
-import fi.vm.yti.groupmanagement.dao.FrontendDao;
-import fi.vm.yti.groupmanagement.model.*;
-import fi.vm.yti.groupmanagement.security.AuthorizationManager;
-import fi.vm.yti.security.AuthenticatedUserProvider;
-import fi.vm.yti.security.Role;
-import fi.vm.yti.security.YtiUser;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,21 +11,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import fi.vm.yti.groupmanagement.dao.FrontendDao;
+import fi.vm.yti.groupmanagement.model.CreateOrganization;
+import fi.vm.yti.groupmanagement.model.EmailRole;
+import fi.vm.yti.groupmanagement.model.Organization;
+import fi.vm.yti.groupmanagement.model.OrganizationListItem;
+import fi.vm.yti.groupmanagement.model.OrganizationWithUsers;
+import fi.vm.yti.groupmanagement.model.UpdateOrganization;
+import fi.vm.yti.groupmanagement.model.UserRequest;
+import fi.vm.yti.groupmanagement.model.UserRequestModel;
+import fi.vm.yti.groupmanagement.model.UserRequestWithOrganization;
+import fi.vm.yti.groupmanagement.model.UserWithRoles;
+import fi.vm.yti.groupmanagement.model.UserWithRolesInOrganizations;
+import fi.vm.yti.groupmanagement.security.AuthorizationManager;
+import fi.vm.yti.security.AuthenticatedUserProvider;
+import fi.vm.yti.security.Role;
+import fi.vm.yti.security.YtiUser;
 import static fi.vm.yti.security.AuthorizationException.check;
 
 @Service
 public class FrontendService {
 
+    private static final Logger logger = LoggerFactory.getLogger(FrontendService.class);
     private final FrontendDao frontendDao;
     private final AuthorizationManager authorizationManager;
     private final AuthenticatedUserProvider userProvider;
     private final EmailSenderService emailSenderService;
-    private static final Logger logger = LoggerFactory.getLogger(FrontendService.class);
 
     @Autowired
     public FrontendService(FrontendDao frontendDao,
@@ -41,13 +50,13 @@ public class FrontendService {
     }
 
     @Transactional
-    public UUID createOrganization(CreateOrganization createOrganizationModel) {
+    public UUID createOrganization(final CreateOrganization createOrganizationModel) {
 
         check(authorizationManager.canCreateOrganization());
 
-        UUID id = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
 
-        Organization org = new Organization();
+        final Organization org = new Organization();
         org.id = id;
         org.url = createOrganizationModel.url;
         org.nameEn = createOrganizationModel.nameEn;
@@ -59,7 +68,7 @@ public class FrontendService {
 
         frontendDao.createOrganization(org);
 
-        for (String adminUserEmail : createOrganizationModel.adminUserEmails) {
+        for (final String adminUserEmail : createOrganizationModel.adminUserEmails) {
             frontendDao.addUserToRoleInOrganization(adminUserEmail, "ADMIN", id);
         }
 
@@ -67,22 +76,22 @@ public class FrontendService {
     }
 
     @Transactional
-    public void updateOrganization(UpdateOrganization updateOrganization) {
+    public void updateOrganization(final UpdateOrganization updateOrganization) {
 
         check(authorizationManager.canEditOrganization(updateOrganization.organization.id));
 
-        Organization organization = updateOrganization.organization;
-        UUID id = organization.id;
+        final Organization organization = updateOrganization.organization;
+        final UUID id = organization.id;
         frontendDao.updateOrganization(organization);
         frontendDao.clearUserRoles(id);
 
-        for (EmailRole userRole : updateOrganization.userRoles) {
+        for (final EmailRole userRole : updateOrganization.userRoles) {
             frontendDao.addUserToRoleInOrganization(userRole.userEmail, userRole.role, id);
         }
     }
 
     @Transactional
-    public List<OrganizationListItem> getOrganizationListOpt(Boolean showRemoved) {
+    public List<OrganizationListItem> getOrganizationListOpt(final Boolean showRemoved) {
         return frontendDao.getOrganizationListOpt(showRemoved);
     }
 
@@ -96,11 +105,11 @@ public class FrontendService {
 
         check(authorizationManager.canViewOrganization(organizationId));
 
-        Organization organizationModel = frontendDao.getOrganization(organizationId);
-        List<UserWithRoles> users = frontendDao.getOrganizationUsers(organizationId);
-        List<String> availableRoles = frontendDao.getAvailableRoles();
+        final Organization organizationModel = frontendDao.getOrganization(organizationId);
+        final List<UserWithRoles> users = frontendDao.getOrganizationUsers(organizationId);
+        final List<String> availableRoles = frontendDao.getAvailableRoles();
 
-        OrganizationWithUsers organizationWithUsers = new OrganizationWithUsers();
+        final OrganizationWithUsers organizationWithUsers = new OrganizationWithUsers();
         organizationWithUsers.organization = organizationModel;
         organizationWithUsers.users = users;
         organizationWithUsers.availableRoles = availableRoles;
@@ -111,7 +120,7 @@ public class FrontendService {
     @Transactional
     public List<UserWithRolesInOrganizations> getUsersForOwnOrganizations() {
 
-        YtiUser user = this.userProvider.getUser();
+        final YtiUser user = this.userProvider.getUser();
 
         if (user.isSuperuser()) {
             return frontendDao.getUsers();
@@ -122,10 +131,9 @@ public class FrontendService {
 
     @Transactional
     public List<UserWithRolesInOrganizations> getUsers() {
-        YtiUser user = this.userProvider.getUser();
 
         if (authorizationManager.canBrowseUsers()) {
-            if(authorizationManager.canShowAuthenticationDetails()) {
+            if (authorizationManager.canShowAuthenticationDetails()) {
                 return frontendDao.getUsers();
             } else {
                 return frontendDao.getPublicUsers();
@@ -137,19 +145,19 @@ public class FrontendService {
 
     @Transactional
     public List<UserWithRolesInOrganizations> getTestUsers() {
-        YtiUser user = this.userProvider.getUser();
+
         if (authorizationManager.canBrowseUsers()) {
-                return frontendDao.getPublicUsers();
+            return frontendDao.getPublicUsers();
         } else {
             return Collections.emptyList();
         }
     }
 
-
     @Transactional
-    public boolean removeUser(String email) {
-        YtiUser user = userProvider.getUser();
-        if(user.isSuperuser() && !user.getEmail().equals(email)) {
+    public boolean removeUser(final String email) {
+
+        final YtiUser user = userProvider.getUser();
+        if (user.isSuperuser() && !user.getEmail().equals(email)) {
             logger.info("Removing user from group management!");
             return frontendDao.removeUser(email);
         } else return false;
@@ -163,12 +171,12 @@ public class FrontendService {
     @Transactional
     public List<UserRequestWithOrganization> getAllUserRequests() {
 
-        YtiUser user = userProvider.getUser();
+        final YtiUser user = userProvider.getUser();
 
         if (user.isSuperuser()) {
             return frontendDao.getAllUserRequestsForOrganizations(null);
         } else {
-            Set<UUID> organizations = user.getOrganizations(Role.ADMIN);
+            final Set<UUID> organizations = user.getOrganizations(Role.ADMIN);
 
             if (organizations.isEmpty()) {
                 return Collections.emptyList();
@@ -179,34 +187,44 @@ public class FrontendService {
     }
 
     @Transactional
-    public void addUserRequest(UserRequestModel request) {
+    public void addUserRequest(final UserRequestModel request) {
         this.frontendDao.addUserRequest(request);
     }
 
     @Transactional
-    public void declineUserRequest(int requestId) {
+    public void declineUserRequest(final int requestId) {
 
-        UserRequest userRequest = this.frontendDao.getUserRequest(requestId);
+        final UserRequest userRequest = this.frontendDao.getUserRequest(requestId);
         check(authorizationManager.canEditOrganization(userRequest.organizationId));
 
         this.frontendDao.deleteUserRequest(requestId);
     }
 
     @Transactional
-    public void acceptUserRequest(int requestId) {
+    public void acceptUserRequest(final int requestId) {
 
-        UserRequest userRequest = this.frontendDao.getUserRequest(requestId);
+        final UserRequest userRequest = this.frontendDao.getUserRequest(requestId);
         check(authorizationManager.canEditOrganization(userRequest.organizationId));
 
         this.frontendDao.deleteUserRequest(requestId);
         this.frontendDao.addUserToRoleInOrganization(userRequest.userEmail, userRequest.roleName, userRequest.organizationId);
-        String name = this.frontendDao.getOrganizationNameFI(userRequest.organizationId);        
+        final String name = this.frontendDao.getOrganizationNameFI(userRequest.organizationId);
         this.emailSenderService.sendEmailToUserOnAcceptance(userRequest.userEmail, userRequest.userId, name);
     }
 
-    /** uncomment if you need to trigger email-sending manually  
-    public void sendEmails(){
-        this.emailSenderService.sendEmailsToAdmins();
+    @Transactional
+    public String createToken(final UUID userId) {
+        return this.frontendDao.createToken(userId);
     }
-    */
+
+    @Transactional
+    public boolean deleteToken(final UUID userId) {
+        return this.frontendDao.deleteToken(userId);
+    }
+
+    /** uncomment if you need to trigger email-sending manually
+     public void sendEmails(){
+     this.emailSenderService.sendEmailsToAdmins();
+     }
+     */
 }
