@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenCentral()
         jcenter()
     }
     dependencies {
@@ -20,6 +21,8 @@ artifactoryPublish.skip = true
 
 repositories {
     mavenLocal()
+    mavenCentral()
+    jcenter()
 
     // put your artifactory parameters to $HOME/.gradle/gradle.properties
     if (project.hasProperty('artifactoryUrl')) {
