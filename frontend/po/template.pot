@@ -230,3 +230,6 @@ msgstr ""
 
 msgid "INFO_TEXT_EMAIL_SUBSCRIPTIONS"
 msgstr ""
+
+msgid "REMOVE EMAIL SUBSCRIPTION TO RESOURCE?"
+msgstr ""
