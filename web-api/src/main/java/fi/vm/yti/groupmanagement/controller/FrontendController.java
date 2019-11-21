@@ -150,7 +150,7 @@ public class FrontendController {
         this.frontendService.acceptUserRequest(id);
     }
 
-    @RequestMapping(value = "/configuration", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/config", method = GET, produces = APPLICATION_JSON_VALUE)
     public ConfigurationModel getConfiguration() {
         logger.info("getConfiguration requested");
 
