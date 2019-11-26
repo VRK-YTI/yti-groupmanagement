@@ -11,6 +11,7 @@
   <dl>
     <dt>
       <label translate>Email notifications</label>
+      <app-information-symbol [infoText]="'INFO_TEXT_EMAIL_SUBSCRIPTIONS'"></app-information-symbol>
     </dt>
     <dd>
       <div class="checkbox">
@@ -78,7 +79,7 @@
     </dt>
     <dd>
       <div *ngFor="let resource of messagingResources.get(APPLICATION_COMMENTS)">
-        <a href="{{ getCommentsUriWithEnv(resource.uri) }}" target="_blank"><span>{{ resource.getDisplayName(languageService, true) }}</span></a>
+        <a href="{{ getUriWithEnv(resource.uri) }}" target="_blank"><span>{{ resource.getDisplayName(languageService, true) }}</span></a>
         <button [id]="'remove_' + resource.uri + '_ref_button'"
                 type="button"
                 class="icon icon-trash"

@@ -150,7 +150,7 @@ public class FrontendController {
         this.frontendService.acceptUserRequest(id);
     }
 
-    @RequestMapping(value = "/configuration", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/config", method = GET, produces = APPLICATION_JSON_VALUE)
     public ConfigurationModel getConfiguration() {
         logger.info("getConfiguration requested");
 
@@ -171,7 +171,6 @@ public class FrontendController {
     @RequestMapping(value = "/token", method = POST, produces = APPLICATION_JSON_VALUE)
     public TokenModel createToken() {
         final UUID userId = authorizationManager.getUser().getId();
-//        final UUID userId = UUID.fromString("4ce70937-6fa4-49af-a229-b5f10328adb8");
         if (userId != null) {
             logger.info("Fetching token for user: " + userId.toString());
             final String token = frontendService.createToken(userId);

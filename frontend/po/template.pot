@@ -195,7 +195,7 @@ msgstr ""
 msgid "SUBSCRIPTIONS"
 msgstr ""
 
-msgid "MEMBER"
+msgid "All roles"
 msgstr ""
 
 msgid "Front page"
@@ -210,10 +210,10 @@ msgstr ""
 msgid "CODE_LIST_EDITOR"
 msgstr ""
 
-msgid "ADMIN"
+msgid "MEMBER"
 msgstr ""
 
-msgid "All roles"
+msgid "ADMIN"
 msgstr ""
 
 msgid "All organizations"
@@ -226,4 +226,10 @@ msgid "This user will be removed."
 msgstr ""
 
 msgid "INFO_TEXT_TOKEN"
+msgstr ""
+
+msgid "INFO_TEXT_EMAIL_SUBSCRIPTIONS"
+msgstr ""
+
+msgid "REMOVE EMAIL SUBSCRIPTION TO RESOURCE?"
 msgstr ""
