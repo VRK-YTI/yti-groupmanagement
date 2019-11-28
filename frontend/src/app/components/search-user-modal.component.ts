@@ -7,7 +7,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { User } from '../entities/user';
 import { ApiService } from '../services/api.service';
-import { ModalService } from '../services/modal.service';
+import { ModalService } from 'yti-common-ui/services/modal.service';
 import { map } from 'rxjs/operators';
 
 @Injectable()
