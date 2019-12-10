@@ -1,6 +1,6 @@
 import { Component, Injectable, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalService } from '../services/modal.service';
+import { ModalService } from 'yti-common-ui/services/modal.service';
 
 @Injectable()
 export class DeleteConfirmationModalService {
@@ -31,7 +31,7 @@ export class DeleteConfirmationModalService {
     <div class="modal-body">
       <div class="row">
         <div class="col-md-12">
-          
+
             <p>{{contenttext | translate}}</p>
             <li>{{username}}  ({{useremail}})</li>
           <br>
