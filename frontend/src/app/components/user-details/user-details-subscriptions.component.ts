@@ -152,7 +152,6 @@ export class UserDetailsSubscriptionsComponent implements OnInit {
     this.openToggleNotifications(subscriptionTargetType === 'DAILY')
       .then(() => {
         this.messagingService.setSubscriptionType(subscriptionTargetType).subscribe(messagingUserData => {
-          console.log('change subscription type to: ' + messagingUserData.subscriptionType);
           this.subscriptionType = messagingUserData.subscriptionType;
         });
       }, ignoreModalClose);
