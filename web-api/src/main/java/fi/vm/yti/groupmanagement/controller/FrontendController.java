@@ -185,7 +185,6 @@ public class FrontendController {
     @RequestMapping(value = "/token", method = DELETE)
     public Boolean deleteToken() {
         final UUID userId = authorizationManager.getUser().getId();
-//        final UUID userId = UUID.fromString("4ce70937-6fa4-49af-a229-b5f10328adb8");
         if (userId != null) {
             logger.info("Deleting token for user: " + userId.toString());
             return frontendService.deleteToken(userId);
