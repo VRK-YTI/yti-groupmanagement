@@ -3,11 +3,13 @@ package fi.vm.yti.groupmanagement.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.yti.groupmanagement.dao.PublicApiDao;
+import fi.vm.yti.groupmanagement.model.PublicApiUser;
 import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
 import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
 import fi.vm.yti.groupmanagement.model.TokenModel;
@@ -31,6 +33,26 @@ public class PrivateApiService {
     @Transactional
     public List<PublicApiUserListItem> getModifiedUsers(String ifModifiedSince) {
         return this.publicApiDao.getModifiedUsers(ifModifiedSince);
+    }
+
+    @Transactional
+    public @NotNull PublicApiUser getUserByEmail(@NotNull String email) {
+        return this.publicApiDao.getUserByEmail(email);
+    }
+
+    @Transactional
+    public @NotNull PublicApiUser getOrCreateUser(@NotNull final String email,
+                                                  @NotNull final String firstName,
+                                                  @NotNull final String lastName) {
+
+        PublicApiUser user = publicApiDao.findUserByEmail(email);
+
+        if (user != null) {
+            return user;
+        } else {
+            UUID id = UUID.randomUUID();
+            return publicApiDao.createUser(email, firstName, lastName, id);
+        }
     }
 
     @Transactional
