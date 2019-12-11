@@ -243,20 +243,19 @@ public class PublicApiDao {
         return rowsToOrganizations(rows);
     }
 
-    public void addUserRequest(final String email,
+    public void addUserRequest(final UUID userId,
                                final UUID organizationId,
                                final String role) {
-        database.update("INSERT INTO request (user_id, organization_id, role_name, sent) VALUES ((select id from \"user\" where email = ?),?,?,?)",
-            email, organizationId, role, false);
+        database.update("INSERT INTO request (user_id, organization_id, role_name, sent) VALUES (?,?,?,?)",
+            userId, organizationId, role, false);
     }
 
-    public List<PublicApiUserRequest> getUserRequests(final String email) {
+    public List<PublicApiUserRequest> getUserRequests(final UUID userId) {
         return database.findAll(PublicApiUserRequest.class,
             "SELECT organization_id, array_agg(role_name)\n" +
                 "FROM request r \n" +
-                "LEFT JOIN \"user\" u on (u.id = r.user_id)" +
-                "WHERE u.email = ? \n" +
-                "GROUP BY r.organization_id", email);
+                "WHERE r.user_id = ? \n" +
+                "GROUP BY r.organization_id", userId);
     }
 
     public static final class OrganizationRow {

@@ -66,18 +66,6 @@ public class PublicApiService {
     }
 
     @Transactional
-    public void addUserRequest(final String email,
-                               final UUID organizationId,
-                               final String role) {
-        publicApiDao.addUserRequest(email, organizationId, role);
-    }
-
-    @Transactional
-    public List<PublicApiUserRequest> getUserRequests(final String email) {
-        return this.publicApiDao.getUserRequests(email);
-    }
-
-    @Transactional
     public List<PublicApiUserListItem> getUsers() {
         return this.publicApiDao.getPublicUsers();
     }
