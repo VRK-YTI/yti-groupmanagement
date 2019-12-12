@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,10 +18,8 @@ import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
 import fi.vm.yti.groupmanagement.model.PublicApiUser;
 import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
 import fi.vm.yti.groupmanagement.service.PublicApiService;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping("/public-api")
@@ -33,21 +30,6 @@ public class PublicApiController {
 
     public PublicApiController(PublicApiService publicApiService) {
         this.publicApiService = publicApiService;
-    }
-
-    @RequestMapping(value = "/user", method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_UTF8_VALUE)
-    public PublicApiUser getUserByEmail(@RequestBody final NewUser newUser) {
-        logger.info("POST /user requested");
-
-        if (newUser.email.isEmpty()) {
-            throw new RuntimeException("Email is a mandatory parameter");
-        }
-
-        if (newUser.firstName != null && newUser.lastName != null) {
-            return this.publicApiService.getOrCreateUser(newUser.email, newUser.firstName, newUser.lastName);
-        } else {
-            return this.publicApiService.getUserByEmail(newUser.email);
-        }
     }
 
     @RequestMapping(value = "/user", method = GET, produces = APPLICATION_JSON_VALUE, params = "id")
