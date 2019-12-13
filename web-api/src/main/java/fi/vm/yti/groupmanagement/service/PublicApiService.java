@@ -12,7 +12,6 @@ import fi.vm.yti.groupmanagement.dao.PublicApiDao;
 import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
 import fi.vm.yti.groupmanagement.model.PublicApiUser;
 import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
 
 @Service
 public class PublicApiService {

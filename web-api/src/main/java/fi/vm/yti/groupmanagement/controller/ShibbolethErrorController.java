@@ -43,19 +43,14 @@ public class ShibbolethErrorController {
                       @RequestParam(required = false) @Nullable final String statusCode,
                       @RequestParam(required = false) @Nullable final String statusCode2,
                       final Map<String, Object> model) {
-
         logger.info("loginError, requestURL: " + requestURL + ", errorType: " + errorType + " and errorText: " + errorText);
         final boolean signUpMissing = isSignUpMissing(errorType, statusCode, statusCode2);
-
         model.put("missingSignUp", signUpMissing);
         model.put("genericError", !signUpMissing);
-
         model.put("registrationUrl", registrationUrl);
-
         if (relayState != null) {
             model.put("goBackUrl", createLoginUrl(request, relayState));
         }
-
         model.put("now", now);
         model.put("requestURL", requestURL);
         model.put("errorType", errorType);
@@ -64,7 +59,6 @@ public class ShibbolethErrorController {
         model.put("entityID", entityID);
         model.put("statusCode", statusCode);
         model.put("statusCode2", statusCode2);
-
         return "loginError";
     }
 }
