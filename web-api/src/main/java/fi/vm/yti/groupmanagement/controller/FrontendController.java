@@ -79,11 +79,6 @@ public class FrontendController {
 
     @RequestMapping(value = "/organization", method = PUT, produces = APPLICATION_JSON_VALUE)
     public void updateOrganization(@RequestBody final UpdateOrganization updateOrganization) {
-        final List<EmailRole> userRoles = updateOrganization.userRoles;
-        final List<String> emailRoles = new ArrayList<>();
-        for (final EmailRole item : userRoles) {
-            emailRoles.add(new String(item.userEmail + ": " + item.role));
-        }
         this.frontendService.updateOrganization(updateOrganization);
     }
 
