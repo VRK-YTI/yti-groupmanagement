@@ -80,6 +80,7 @@ public class FrontendService {
 
         check(authorizationManager.canEditOrganization(updateOrganization.organization.id));
 
+        validateEmailRoles(updateOrganization.userRoles);
         final Organization organization = updateOrganization.organization;
         final UUID id = organization.id;
         frontendDao.updateOrganization(organization);
@@ -220,6 +221,23 @@ public class FrontendService {
     @Transactional
     public boolean deleteToken(final UUID userId) {
         return this.frontendDao.deleteToken(userId);
+    }
+
+    private void validateEmailRoles(final List<EmailRole> emailRoles) {
+        boolean hasAdmin = false;
+        for (final EmailRole emailRole : emailRoles) {
+            try {
+                final Role role = Role.valueOf(emailRole.role);
+                if (role.equals(Role.ADMIN)) {
+                    hasAdmin = true;
+                }
+            } catch (final Exception e) {
+                throw new RuntimeException("Role not valid: " + emailRole.role);
+            }
+        }
+        if (!hasAdmin) {
+            throw new RuntimeException("Organization needs to have at least one user with ADMIN role.");
+        }
     }
 
     /** uncomment if you need to trigger email-sending manually
