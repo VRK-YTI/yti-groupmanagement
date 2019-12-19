@@ -1,8 +1,11 @@
 package fi.vm.yti.groupmanagement.model;
 
+import java.util.UUID;
+
 public class User {
 
     public String email;
+    public UUID id;
     public String firstName;
     public String lastName;
     public String creationDateTime;

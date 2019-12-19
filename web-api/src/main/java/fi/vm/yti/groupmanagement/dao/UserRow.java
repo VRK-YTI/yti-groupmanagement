@@ -9,6 +9,11 @@ public final class UserRow {
     UserDetails user = new UserDetails();
     OrganizationDetails organization = new OrganizationDetails();
 
+    public UserRow(UUID userId) {
+
+        this.user.id = userId;
+    }
+
     public UserRow(String email,
                    String firstName,
                    String lastName,

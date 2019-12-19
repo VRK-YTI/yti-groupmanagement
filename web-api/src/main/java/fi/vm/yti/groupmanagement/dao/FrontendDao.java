@@ -153,6 +153,7 @@ public class FrontendDao {
         return mapToList(rows, row -> {
 
             User user = new User();
+            user.id = row.user.id;
             user.firstName = row.user.firstName;
             user.lastName = row.user.lastName;
             user.email = row.user.email;
@@ -204,16 +205,9 @@ public class FrontendDao {
     }
 
     public void addUserRequest(UserRequestModel userRequest) {
-        logger.info("AddUserRequest 1");
-        // Log new user id
         db.update("INSERT INTO request (user_id, organization_id, role_name, sent) VALUES ((select id from \"user\" where email = ?),?,?,?)",
             userRequest.email, userRequest.organizationId, userRequest.role, false);
-        // Log newly created  user id
-        logger.info("AddUserRequest 2");
         @NotNull List<UUID> userIds = db.findAll(UUID.class, "SELECT id from user where email = ?", userRequest.email);
-        if (userIds != null && userIds.size() == 1) {
-            logger.info("AddNewUser id:" + userIds.get(0).toString());
-        }
     }
 
     public @NotNull List<UserRequestWithOrganization> getAllUserRequestsForOrganizations(@Nullable Set<UUID> organizations) {
@@ -244,7 +238,6 @@ public class FrontendDao {
 
     public String createToken(final UUID userId) {
 
-        // TODO: Check if db would work with just plain Date instead of LocalDateTime
         final LocalDateTime createdAtLocalDateTime = now();
         final LocalDateTime invalidatedAtLocalDateTime = createdAtLocalDateTime.plusMonths(6);
         final Date createdAt = Date.from(createdAtLocalDateTime.atZone(ZoneId.of("UTC")).toInstant());
@@ -262,6 +255,14 @@ public class FrontendDao {
 
         final int success = db.update("UPDATE \"user\" SET token_created_at = NULL, token_invalidation_at = NULL WHERE id = ?", userId);
         return success == 1;
+    }
+
+    public UUID getUserIdForEmail(final String email) {
+        final List<UserRow> rows = db.findAll(UserRow.class,"SELECT u.id FROM \"user\" u WHERE u.email = ?", email);
+        if (rows.size() == 1) {
+            return rows.get(0).user.id;
+        }
+        return null;
     }
 
     void updateOrganizationModifiedStamp(UUID orgId) {

@@ -1,6 +1,5 @@
 package fi.vm.yti.groupmanagement.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +13,6 @@ import fi.vm.yti.groupmanagement.config.ApplicationProperties;
 import fi.vm.yti.groupmanagement.config.ImpersonateProperties;
 import fi.vm.yti.groupmanagement.model.ConfigurationModel;
 import fi.vm.yti.groupmanagement.model.CreateOrganization;
-import fi.vm.yti.groupmanagement.model.EmailRole;
 import fi.vm.yti.groupmanagement.model.OrganizationListItem;
 import fi.vm.yti.groupmanagement.model.OrganizationWithUsers;
 import fi.vm.yti.groupmanagement.model.TokenModel;

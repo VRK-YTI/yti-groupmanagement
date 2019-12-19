@@ -3,6 +3,8 @@ package fi.vm.yti.groupmanagement.controller;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +27,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RestController
 @RequestMapping("/private-api")
 public class PrivateApiController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PrivateApiController.class);
 
     private final PrivateApiService privateApiService;
 
@@ -51,7 +55,7 @@ public class PrivateApiController {
         if (token != null && token.token != null && !token.token.isEmpty()) {
             return this.privateApiService.validateToken(token);
         } else {
-            throw new RuntimeException("No token present in validation API!");
+            throw new RuntimeException("No token present in validation API.");
         }
     }
 
@@ -59,7 +63,12 @@ public class PrivateApiController {
     public void addUserRequest(@RequestParam UUID userId,
                                @RequestParam UUID organizationId,
                                @RequestParam String role) {
-        this.privateApiService.addUserRequest(userId, organizationId, role);
+        if (userId != null && organizationId != null && role != null) {
+            logger.info("Organization request received for user: " + userId.toString() + " to organization: " + organizationId.toString());
+            this.privateApiService.addUserRequest(userId, organizationId, role);
+        } else {
+            throw new RuntimeException("Mandatory request parameters are not present.");
+        }
     }
 
     @RequestMapping(value = "/requests", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -70,7 +79,7 @@ public class PrivateApiController {
     @RequestMapping(value = "/user", method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_UTF8_VALUE)
     public PublicApiUser getUserByEmail(@RequestBody final NewUser newUser) {
         if (newUser.email.isEmpty()) {
-            throw new RuntimeException("Email is a mandatory parameter");
+            throw new RuntimeException("Email is a mandatory parameter.");
         }
         if (newUser.firstName != null && newUser.lastName != null) {
             return this.privateApiService.getOrCreateUser(newUser.email, newUser.firstName, newUser.lastName);

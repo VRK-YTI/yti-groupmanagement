@@ -1,7 +1,10 @@
 package fi.vm.yti.groupmanagement.service;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -51,11 +54,8 @@ public class FrontendService {
 
     @Transactional
     public UUID createOrganization(final CreateOrganization createOrganizationModel) {
-
         check(authorizationManager.canCreateOrganization());
-
         final UUID id = UUID.randomUUID();
-
         final Organization org = new Organization();
         org.id = id;
         org.url = createOrganizationModel.url;
@@ -65,29 +65,80 @@ public class FrontendService {
         org.descriptionEn = createOrganizationModel.descriptionEn;
         org.descriptionFi = createOrganizationModel.descriptionFi;
         org.descriptionSv = createOrganizationModel.descriptionSv;
-
         frontendDao.createOrganization(org);
-
         for (final String adminUserEmail : createOrganizationModel.adminUserEmails) {
             frontendDao.addUserToRoleInOrganization(adminUserEmail, "ADMIN", id);
         }
-
+        final YtiUser user = userProvider.getUser();
+        logger.info("Organization with ID: " + id.toString() + " created by user: " + user.getId());
         return id;
     }
 
     @Transactional
     public void updateOrganization(final UpdateOrganization updateOrganization) {
-
         check(authorizationManager.canEditOrganization(updateOrganization.organization.id));
-
         validateEmailRoles(updateOrganization.userRoles);
         final Organization organization = updateOrganization.organization;
         final UUID id = organization.id;
         frontendDao.updateOrganization(organization);
+        logOrganizationUpdate(id, updateOrganization.userRoles);
         frontendDao.clearUserRoles(id);
-
         for (final EmailRole userRole : updateOrganization.userRoles) {
             frontendDao.addUserToRoleInOrganization(userRole.userEmail, userRole.role, id);
+        }
+    }
+
+    private void logOrganizationUpdate(final UUID organizationId,
+                                       final List<EmailRole> updatedEmailRoles) {
+        final YtiUser user = userProvider.getUser();
+        final Set<String> updatedUsers = new HashSet<>();
+        updatedEmailRoles.forEach(emailRole -> updatedUsers.add(emailRole.userEmail));
+        final List<UserWithRoles> existingOrganizationUsers = frontendDao.getOrganizationUsers(organizationId);
+        final Map<String, UUID> existingUsers = new HashMap<>();
+        existingOrganizationUsers.forEach(existingOrganizationUser -> existingUsers.put(existingOrganizationUser.user.email, existingOrganizationUser.user.id));
+        final Set<String> addedUsers = new HashSet<>();
+        final Set<UUID> removedUsers = new HashSet<>();
+        existingUsers.keySet().forEach(email -> {
+            if (!updatedUsers.contains(email)) {
+                removedUsers.add(existingUsers.get(email));
+            }
+        });
+        updatedUsers.forEach(email -> {
+            if (!existingUsers.keySet().contains(email)) {
+                addedUsers.add(email);
+            }
+        });
+        final StringBuffer buffer = new StringBuffer();
+        if (!addedUsers.isEmpty() || !removedUsers.isEmpty()) {
+            buffer.append("Organization updated with ID: " + organizationId.toString() + " by user: " + user.getId());
+            if (!addedUsers.isEmpty()) {
+                buffer.append(" added users: ");
+                int i = 0;
+                for (final String email : addedUsers) {
+                    final UUID userId = frontendDao.getUserIdForEmail(email);
+                    if (userId != null) {
+                        buffer.append(userId.toString());
+                    }
+                    i++;
+                    if (i < addedUsers.size()) {
+                        buffer.append(", ");
+                    }
+                }
+            }
+            if (!removedUsers.isEmpty()) {
+                buffer.append(" removed users: ");
+                int i = 0;
+                for (final UUID userId : removedUsers) {
+                    buffer.append(userId.toString());
+                    i++;
+                    if (i < removedUsers.size()) {
+                        buffer.append(", ");
+                    }
+                }
+            }
+            logger.info(buffer.toString());
+        } else {
+            logger.info("Organization updated with ID: " + organizationId.toString() + " by user: " + user.getId());
         }
     }
 
@@ -159,9 +210,13 @@ public class FrontendService {
 
         final YtiUser user = userProvider.getUser();
         if (user.isSuperuser() && !user.getEmail().equals(email)) {
-            logger.info("Removing user from group management!");
-            return frontendDao.removeUser(email);
-        } else return false;
+            final UUID removedUserId = frontendDao.getUserIdForEmail(email);
+            if (removedUserId != null) {
+                logger.info("Removing user: " + removedUserId + " by user: " + user.getId());
+                return frontendDao.removeUser(email);
+            }
+        }
+        return false;
     }
 
     @Transactional
@@ -197,7 +252,8 @@ public class FrontendService {
 
         final UserRequest userRequest = this.frontendDao.getUserRequest(requestId);
         check(authorizationManager.canEditOrganization(userRequest.organizationId));
-
+        final YtiUser user = userProvider.getUser();
+        logger.info("User organization request declibed by user: " + user.getId() + " for user: " + userRequest.userId + " to organization: " + userRequest.organizationId);
         this.frontendDao.deleteUserRequest(requestId);
     }
 
@@ -206,7 +262,8 @@ public class FrontendService {
 
         final UserRequest userRequest = this.frontendDao.getUserRequest(requestId);
         check(authorizationManager.canEditOrganization(userRequest.organizationId));
-
+        final YtiUser user = userProvider.getUser();
+        logger.info("User organization request accepted by user: " + user.getId() + " for user: " + userRequest.userId + " to organization: " + userRequest.organizationId);
         this.frontendDao.deleteUserRequest(requestId);
         this.frontendDao.addUserToRoleInOrganization(userRequest.userEmail, userRequest.roleName, userRequest.organizationId);
         final String name = this.frontendDao.getOrganizationNameFI(userRequest.organizationId);

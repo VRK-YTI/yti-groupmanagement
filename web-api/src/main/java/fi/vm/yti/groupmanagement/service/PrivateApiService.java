@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ import fi.vm.yti.security.YtiUser;
 
 @Service
 public class PrivateApiService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PrivateApiService.class);
 
     private final PublicApiDao publicApiDao;
 
@@ -45,12 +49,13 @@ public class PrivateApiService {
                                                   @NotNull final String firstName,
                                                   @NotNull final String lastName) {
 
-        PublicApiUser user = publicApiDao.findUserByEmail(email);
+        final PublicApiUser user = publicApiDao.findUserByEmail(email);
 
         if (user != null) {
             return user;
         } else {
             UUID id = UUID.randomUUID();
+            logger.info("Creating new user with ID: " + id.toString());
             return publicApiDao.createUser(email, firstName, lastName, id);
         }
     }
