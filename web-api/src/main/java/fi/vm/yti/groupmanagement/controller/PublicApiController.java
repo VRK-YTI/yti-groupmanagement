@@ -41,7 +41,7 @@ public class PublicApiController {
     @RequestMapping(value = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PublicApiUserListItem>> getUsers(@RequestHeader(value = "If-Modified-Since", required = false) final String ifModifiedSince) {
         if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            List<PublicApiUserListItem> users = publicApiService.getModifiedUsers(ifModifiedSince);
+            final List<PublicApiUserListItem> users = publicApiService.getModifiedUsers(ifModifiedSince);
             if (users.size() > 0) {
                 return new ResponseEntity<>(users, HttpStatus.OK);
             } else {
@@ -61,7 +61,7 @@ public class PublicApiController {
             ifModifiedSince = ifModifiedSinceParam;
         }
         if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            List<PublicApiOrganization> organizations = publicApiService.getModifiedOrganizations(ifModifiedSince, onlyValid);
+            final List<PublicApiOrganization> organizations = publicApiService.getModifiedOrganizations(ifModifiedSince, onlyValid);
             if (organizations.size() > 0) {
                 return new ResponseEntity<>(organizations, HttpStatus.OK);
             } else {
@@ -75,6 +75,7 @@ public class PublicApiController {
 
 class NewUser {
 
+    public UUID id;
     public String email;
     public String firstName;
     public String lastName;

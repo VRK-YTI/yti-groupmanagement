@@ -34,6 +34,11 @@ public class PublicApiService {
     }
 
     @Transactional
+    public PublicApiUser findTempUserById(@NotNull UUID id) {
+        return this.publicApiDao.findTempUserById(id);
+    }
+
+    @Transactional
     public @NotNull PublicApiUser getOrCreateUser(@NotNull final String email,
                                                   @NotNull final String firstName,
                                                   @NotNull final String lastName) {

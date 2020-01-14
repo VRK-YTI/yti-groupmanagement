@@ -9,20 +9,20 @@ public final class UserRow {
     UserDetails user = new UserDetails();
     OrganizationDetails organization = new OrganizationDetails();
 
-    public UserRow(UUID userId) {
+    public UserRow(final UUID userId) {
 
         this.user.id = userId;
     }
 
-    public UserRow(String email,
-                   String firstName,
-                   String lastName,
-                   boolean superuser,
-                   UUID organizationId,
-                   LocalDateTime creationDateTime,
-                   UUID userId,
-                   LocalDateTime removalDateTime,
-                   List<String> roles) {
+    public UserRow(final String email,
+                   final String firstName,
+                   final String lastName,
+                   final boolean superuser,
+                   final UUID organizationId,
+                   final LocalDateTime creationDateTime,
+                   final UUID userId,
+                   final LocalDateTime removalDateTime,
+                   final List<String> roles) {
 
         this.user.email = email;
         this.user.firstName = firstName;
@@ -35,17 +35,17 @@ public final class UserRow {
         this.organization.roles = roles;
     }
 
-    public UserRow(String email,
-                   String firstName,
-                   String lastName,
-                   boolean superuser,
-                   UUID organizationId,
-                   LocalDateTime creationDateTime,
-                   UUID userId,
-                   LocalDateTime removalDateTime,
-                   LocalDateTime tokenCreatedAt,
-                   LocalDateTime tokenInvalidationAt,
-                   List<String> roles) {
+    public UserRow(final String email,
+                   final String firstName,
+                   final String lastName,
+                   final boolean superuser,
+                   final UUID organizationId,
+                   final LocalDateTime creationDateTime,
+                   final UUID userId,
+                   final LocalDateTime removalDateTime,
+                   final LocalDateTime tokenCreatedAt,
+                   final LocalDateTime tokenInvalidationAt,
+                   final List<String> roles) {
 
         this.user.email = email;
         this.user.firstName = firstName;

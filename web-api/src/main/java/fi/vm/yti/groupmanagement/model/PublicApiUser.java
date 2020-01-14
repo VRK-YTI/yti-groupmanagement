@@ -16,8 +16,10 @@ public final class PublicApiUser {
     private final List<PublicApiUserOrganization> organization;
     private final UUID id;
     private final LocalDateTime removalDateTime;
-    private LocalDateTime tokenCreatedAt;
-    private LocalDateTime tokenInvalidationAt;
+    private final LocalDateTime tokenCreatedAt;
+    private final LocalDateTime tokenInvalidationAt;
+    private final String containerUri;
+    private final String tokenRole;
 
     public PublicApiUser(final String email,
                          final String firstName,
@@ -29,6 +31,8 @@ public final class PublicApiUser {
                          final LocalDateTime removalDateTime,
                          final LocalDateTime tokenCreatedAt,
                          final LocalDateTime tokenInvalidationAt,
+                         final String containerUri,
+                         final String tokenRole,
                          final List<PublicApiUserOrganization> organization) {
         this.email = email;
         this.firstName = firstName;
@@ -40,6 +44,8 @@ public final class PublicApiUser {
         this.id = id;
         this.removalDateTime = removalDateTime;
         this.tokenCreatedAt = tokenCreatedAt;
+        this.containerUri = containerUri;
+        this.tokenRole = tokenRole;
         this.tokenInvalidationAt = tokenInvalidationAt;
     }
 
@@ -83,15 +89,15 @@ public final class PublicApiUser {
         return tokenCreatedAt;
     }
 
-    public void setTokenCreatedAt(final LocalDateTime tokenCreatedAt) {
-        this.tokenCreatedAt = tokenCreatedAt;
-    }
-
     public LocalDateTime getTokenInvalidationAt() {
         return tokenInvalidationAt;
     }
 
-    public void setTokenInvalidationAt(final LocalDateTime tokenInvalidationAt) {
-        this.tokenInvalidationAt = tokenInvalidationAt;
+    public String getContainerUri() {
+        return containerUri;
+    }
+
+    public String getTokenRole() {
+        return tokenRole;
     }
 }
