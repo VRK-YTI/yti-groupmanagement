@@ -88,45 +88,51 @@ public class PrivateApiService {
     @Transactional
     public @NotNull List<PublicApiUser> getOrCreateTempUsers(final String containerUri,
                                                              final List<TempUser> tempUsers) {
-        tempUsers.forEach(tempUser -> {
-            if (tempUser.containerUri == null) {
-                tempUser.containerUri = containerUri;
-            }
-            if (!tempUser.containerUri.equalsIgnoreCase(containerUri)) {
-                throw new RuntimeException("Temp user container uri: " + tempUser.containerUri + " does not match to: " + containerUri);
-            }
-        });
+        if (tempUsers != null) {
+            tempUsers.forEach(tempUser -> {
+                if (tempUser.containerUri == null) {
+                    tempUser.containerUri = containerUri;
+                }
+                if (!tempUser.containerUri.equalsIgnoreCase(containerUri)) {
+                    throw new RuntimeException("Temp user container uri: " + tempUser.containerUri + " does not match to: " + containerUri);
+                }
+            });
+        }
         deleteRemovedUsers(containerUri, tempUsers);
         final List<PublicApiUser> tempUserResults = new ArrayList<>();
-        tempUsers.forEach(tempUser -> {
-            final PublicApiUser user;
-            if (tempUser.id != null) {
-                user = publicApiDao.findTempUserById(tempUser.id);
-            } else {
-                user = null;
-            }
-            if (user != null) {
-                tempUserResults.add(user);
-            } else {
-                UUID id = UUID.randomUUID();
-                tempUser.id = id;
-                logger.info("Creating new temp user with ID: " + id.toString());
-                tempUserResults.add(publicApiDao.createTempUser(tempUser));
-            }
-        });
+        if (tempUsers != null) {
+            tempUsers.forEach(tempUser -> {
+                final PublicApiUser user;
+                if (tempUser.id != null) {
+                    user = publicApiDao.findTempUserById(tempUser.id);
+                } else {
+                    user = null;
+                }
+                if (user != null) {
+                    tempUserResults.add(user);
+                } else {
+                    UUID id = UUID.randomUUID();
+                    tempUser.id = id;
+                    logger.info("Creating new temp user with ID: " + id.toString());
+                    tempUserResults.add(publicApiDao.createTempUser(tempUser));
+                }
+            });
+        }
         return tempUserResults;
     }
 
     private void deleteRemovedUsers(final String containerUri,
                                     final List<TempUser> tempUsers) {
-        final List<PrivateApiTempUserListItem> currentCommentRoundUsers = publicApiDao.getAllTempUsersForContainerUri(containerUri);
+        final List<PrivateApiTempUserListItem> existingTempUsers = publicApiDao.getAllTempUsersForContainerUri(containerUri);
         final Set<PrivateApiTempUserListItem> usersToBeDeleted = new HashSet<>();
-        currentCommentRoundUsers.forEach(currentUser -> {
+        existingTempUsers.forEach(currentUser -> {
             boolean match = false;
-            for (final TempUser tempUser : tempUsers) {
-                if (tempUser.id != null && tempUser.id.equals(currentUser.getId())) {
-                    match = true;
-                    break;
+            if (tempUsers != null) {
+                for (final TempUser tempUser : tempUsers) {
+                    if (tempUser.id != null && tempUser.id.equals(currentUser.getId())) {
+                        match = true;
+                        break;
+                    }
                 }
             }
             if (!match) {
