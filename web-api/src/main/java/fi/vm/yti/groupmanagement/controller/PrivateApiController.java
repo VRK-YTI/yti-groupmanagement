@@ -19,6 +19,7 @@ import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
 import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
 import fi.vm.yti.groupmanagement.model.TempUser;
 import fi.vm.yti.groupmanagement.model.TokenModel;
+import fi.vm.yti.groupmanagement.service.EmailSenderService;
 import fi.vm.yti.groupmanagement.service.PrivateApiService;
 import fi.vm.yti.security.YtiUser;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -33,9 +34,12 @@ public class PrivateApiController {
     private static final Logger logger = LoggerFactory.getLogger(PrivateApiController.class);
 
     private final PrivateApiService privateApiService;
+    private final EmailSenderService emailSenderService;
 
-    public PrivateApiController(final PrivateApiService PrivateApiService) {
+    public PrivateApiController(final PrivateApiService PrivateApiService,
+                                final EmailSenderService emailSenderService) {
         this.privateApiService = PrivateApiService;
+        this.emailSenderService = emailSenderService;
     }
 
     @RequestMapping(value = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -64,6 +68,12 @@ public class PrivateApiController {
         } else {
             return new ResponseEntity<>(this.privateApiService.getTempUsers(), HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "/sendcontaineremails", method = POST)
+    public ResponseEntity<Integer> sendContainerTempUserEmails(@RequestParam final String containerUri) {
+        final int sentEmailCount = emailSenderService.sendEmailsToTempUsersWithContainer(containerUri);
+        return new ResponseEntity<>(sentEmailCount, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/tempusers", method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)

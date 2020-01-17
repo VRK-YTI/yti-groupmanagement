@@ -34,7 +34,7 @@ public class EmailSenderDao {
         "WHERE uo.role_name = 'ADMIN'\n" +
         "GROUP BY uro.id, uro.name_fi, uro.name_en, uro.name_sv, uro.user_id, uro.request_count";
 
-    final String getTempUsersQuery = "SELECT email, firstName, lastName, id, token_role, container_uri FROM tempuser WHERE token_created_at IS NULL AND email IS NOT NULL";
+    final String getTempUsersWithContainerQuery = "SELECT email, firstName, lastName, id, token_role, container_uri FROM tempuser WHERE token_created_at IS NULL AND email IS NOT NULL AND container_uri = ?";
 
     private final Database database;
 
@@ -47,8 +47,8 @@ public class EmailSenderDao {
         return database.findAll(UnsentRequestsForOrganization.class, getUnsentQuery);
     }
 
-    public List<TempUser> getTempUsersWithoutTokens() {
-        return database.findAll(TempUser.class, getTempUsersQuery);
+    public List<TempUser> getTempUsersWithoutTokensAndContainerUri(final String containerUri) {
+        return database.findAll(TempUser.class, getTempUsersWithContainerQuery, containerUri);
     }
 
     public void markRequestAsSentForOrganization(final UUID organizationId) {

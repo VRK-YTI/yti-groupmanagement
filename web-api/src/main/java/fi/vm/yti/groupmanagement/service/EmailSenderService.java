@@ -30,7 +30,7 @@ public class EmailSenderService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailSenderService.class);
     private final ApplicationProperties applicationProperties;
-    private final EmailSenderDao schedulerDao;
+    private final EmailSenderDao emailSenderDao;
     private final FrontendDao frontendDao;
     private final JavaMailSender javaMailSender;
     private final String environmentUrl;
@@ -38,13 +38,13 @@ public class EmailSenderService {
 
     @Autowired
     public EmailSenderService(final ApplicationProperties applicationProperties,
-                              final EmailSenderDao schedulerDao,
+                              final EmailSenderDao emailSenderDao,
                               final FrontendDao frontendDao,
                               final JavaMailSender javaMailSender,
                               @Value("${environment.url}") final String environmentUrl,
                               @Value("${admin.email}") final String adminEmail) {
         this.applicationProperties = applicationProperties;
-        this.schedulerDao = schedulerDao;
+        this.emailSenderDao = emailSenderDao;
         this.frontendDao = frontendDao;
         this.javaMailSender = javaMailSender;
         this.environmentUrl = environmentUrl;
@@ -62,20 +62,22 @@ public class EmailSenderService {
     }
 
     @Transactional
-    public void sendEmailsToTempUsers() {
-        logger.debug("Sending invitations to temp users");
-        for (final TempUser tempUser : schedulerDao.getTempUsersWithoutTokens()) {
+    public int sendEmailsToTempUsersWithContainer(final String containerUri) {
+        logger.debug("Sending invitations to temp users with containerUri: " + containerUri);
+        final List<TempUser> tempUsers = emailSenderDao.getTempUsersWithoutTokensAndContainerUri(containerUri);
+        for (final TempUser tempUser : tempUsers) {
             final String token = frontendDao.createToken(tempUser.id, "tempuser");
             final String uri = constructContainerUriWithTokenAndEnv(tempUser.containerUri, token);
             sendTempUserInvitationEmail(tempUser.email, tempUser.id, tempUser.containerUri, uri);
         }
+        return tempUsers.size();
     }
 
     @Transactional
     public void sendEmailsToAdmins() {
-        for (final UnsentRequestsForOrganization request : schedulerDao.getUnsentRequests()) {
+        for (final UnsentRequestsForOrganization request : emailSenderDao.getUnsentRequests()) {
             sendAccessRequestEmail(request.adminEmails, request.requestCount, request.nameFi);
-            schedulerDao.markRequestAsSentForOrganization(request.id);
+            emailSenderDao.markRequestAsSentForOrganization(request.id);
         }
     }
 
@@ -151,7 +153,7 @@ public class EmailSenderService {
         stringBuffer.append("Olet saanut kutsun Yhteentoimivuusalustan kommentointikierrokselle.<br/><br/>");
         stringBuffer.append("Pääset kommentoimaan kierroksella olevia sisältöjä alla olevasta linkistä. Huomioithan, että linkki on henkilökohtainen ja sen kautta tehty kommentointi tallentuu kierrokselle sinun nimissäsi! Älä siis jaa linkkiä eteenpäin. Linkki on voimassa 6 kk.<br/><br/>");
         stringBuffer.append("<a href=\"" + resourceUriWithToken + "\">" + resourceUri + "</a><br/><br/>");
-        stringBuffer.append("Kommentointi-työkalun käyttöohjeet löydät <a href=\"https://vrk-ewiki.eden.csc.fi/display/YTIJD/6.+Kommentointi\">täältä</a>.<br/><br/>");
+        stringBuffer.append("Kommentointi-työkalun käyttöohjeet löydät <a href=\"https://wiki.dvv.fi/display/YTIJD/6.+Kommentointi\">täältä</a>.<br/><br/>");
         stringBuffer.append("Tämä viesti on lähetetty automaattisesti Yhteentoimivuusalustan Kommentit-työkalusta. Ethän vastaa viestiin!<br/><br/>");
         stringBuffer.append("Jos käytön suhteen ilmenee teknisiä ongelmia, otathan yhteyttä Digi- ja väestötietovirastoon yhteentoimivuus@dvv.fi!");
         stringBuffer.append("</body>");
