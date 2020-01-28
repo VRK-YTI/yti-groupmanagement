@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,17 +22,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import fi.vm.yti.groupmanagement.model.PrivateApiTempUserListItem;
 import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
 import fi.vm.yti.groupmanagement.model.PublicApiUser;
 import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
 import fi.vm.yti.groupmanagement.model.PublicApiUserOrganization;
 import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
+import fi.vm.yti.groupmanagement.model.TempUser;
 import fi.vm.yti.groupmanagement.model.TokenModel;
 import fi.vm.yti.groupmanagement.service.impl.TokenData;
 import fi.vm.yti.groupmanagement.service.impl.TokenServiceImpl;
 import fi.vm.yti.security.Role;
 import fi.vm.yti.security.YtiUser;
 import static fi.vm.yti.groupmanagement.util.CollectionUtil.requireSingleOrNone;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.*;
@@ -59,7 +63,7 @@ public class PublicApiDao {
             .map(org -> new PublicApiUserOrganization(org.id, org.roles))
             .collect(toList());
 
-        return new PublicApiUser(user.email, user.firstName, user.lastName, user.superuser, false, user.creationDateTime, user.id, user.removalDateTime, user.tokenCreatedAt, user.tokenInvalidationAt, nonNullOrganizations);
+        return new PublicApiUser(user.email, user.firstName, user.lastName, user.superuser, false, user.creationDateTime, user.id, user.removalDateTime, user.tokenCreatedAt, user.tokenInvalidationAt, null, null, nonNullOrganizations);
     }
 
     private static List<PublicApiUser> rowsToAuthorizationUsers(List<UserRow> rows) {
@@ -82,12 +86,27 @@ public class PublicApiDao {
         return requireNonNull(findUserByEmail(email));
     }
 
+    public @NotNull PublicApiUser createTempUser(final TempUser tempUser) {
+        this.database.update("INSERT INTO tempuser (id, email, firstname, lastname, token_role, container_uri) VALUES (?,?,?,?,?,?)",
+            tempUser.id, tempUser.email, tempUser.firstName, tempUser.lastName, "MEMBER", tempUser.containerUri);
+
+        return requireNonNull(findTempUserById(tempUser.id));
+    }
+
     public @NotNull PublicApiUser getUserByEmail(@NotNull final String email) {
         return requireNonNull(findUserByEmail(email));
     }
 
     public PublicApiUser getUserById(@NotNull final UUID id) {
         return requireNonNull(findUserById(id));
+    }
+
+    public PublicApiUser getUserOrTempUserById(@NotNull final UUID id) {
+        PublicApiUser publicApiUser = findUserById(id);
+        if (publicApiUser == null) {
+            publicApiUser = findTempUserById(id);
+        }
+        return requireNonNull(publicApiUser);
     }
 
     public @Nullable PublicApiUser findUserByEmail(@NotNull final String email) {
@@ -111,24 +130,37 @@ public class PublicApiDao {
         return requireSingleOrNone(rowsToAuthorizationUsers(rows));
     }
 
-    /**
-     * List all public users, ie users with @localhost as email domain
-     *
-     * @return List of users
-     */
+    public @Nullable PublicApiUser findTempUserById(@NotNull final UUID id) {
+        final List<TempUserRow> rows = database.findAll(TempUserRow.class,
+            "SELECT id, firstname, lastname, email, token_role, container_uri, created_at, removed_at, token_created_at, token_invalidation_at FROM tempuser WHERE id = ?", id);
+
+        if (rows.size() == 1) {
+            final TempUserRow row = rows.get(0);
+            final List<PublicApiUserOrganization> organizations = new ArrayList<>();
+            return new PublicApiUser(row.tempUser.email, row.tempUser.firstName, row.tempUser.lastName, false, false, row.tempUser.creationDateTime, row.tempUser.id, row.tempUser.removalDateTime, row.tempUser.tokenCreatedAt, row.tempUser.tokenInvalidationAt, row.tempUser.containerUri, row.tempUser.tokenRole, organizations);
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
     public List<PublicApiUserListItem> getPublicUsers() {
         return database.findAll(PublicApiUserListItem.class,
             "SELECT email, firstName, lastName, id FROM \"user\" WHERE removed_at IS NULL AND email like '%@localhost' ORDER BY lastname, firstname");
     }
 
-    /**
-     * List all users
-     *
-     * @return List of users
-     */
     public List<PublicApiUserListItem> getAllUsers() {
         return database.findAll(PublicApiUserListItem.class,
             "SELECT email, firstName, lastName, id FROM \"user\" WHERE removed_at IS NULL ORDER BY lastname, firstname");
+    }
+
+    public List<PrivateApiTempUserListItem> getAllTempUsers() {
+        return database.findAll(PrivateApiTempUserListItem.class,
+            "SELECT id, email, firstname, lastname, token_role, container_uri FROM tempuser ORDER BY lastname, firstname");
+    }
+
+    public List<PrivateApiTempUserListItem> getAllTempUsersForContainerUri(final String containerUri) {
+        return database.findAll(PrivateApiTempUserListItem.class,
+            "SELECT id, email, firstname, lastname, token_role, container_uri FROM tempuser WHERE container_uri = ? ORDER BY lastname, firstname", containerUri);
     }
 
     public List<PublicApiUserListItem> getModifiedUsers(final String ifModifiedSince) {
@@ -144,43 +176,83 @@ public class PublicApiDao {
             "SELECT email, firstName, lastName, id FROM \"user\" WHERE removed_at IS NULL AND created_at > ? ORDER BY lastname, firstname", date);
     }
 
+    public List<PrivateApiTempUserListItem> getModifiedTempUsers(final String ifModifiedSince) {
+
+        final Date date;
+        try {
+            date = DateUtils.parseDate(ifModifiedSince);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return database.findAll(PrivateApiTempUserListItem.class,
+            "SELECT email, firstName, lastName, token_role, container_uri, id FROM tempuser WHERE removed_at IS NULL AND created_at > ? ORDER BY lastname, firstname", date);
+    }
+
     public YtiUser validateToken(final TokenModel tokenModel) {
 
         final String token = tokenModel.token;
         final TokenData tokenData = tokenService.getTokenData(token);
         if (tokenData != null) {
-            final PublicApiUser user = findUserById(tokenData.getUserId());
-            if (user != null) {
-                final LocalDateTime createdAtFromUser = user.getTokenCreatedAt();
-                final LocalDateTime invalidationAtFromUser = user.getTokenInvalidationAt();
-                final Date createdAtFromToken = tokenData.getTokenCreatedAt();
-                final Date invalidationAtFromToken = tokenData.getTokenInvalidationAt();
-                if (createdAtFromUser != null && invalidationAtFromUser != null && createdAtFromToken != null && invalidationAtFromToken != null) {
-                    final Instant createdAtFromUserInstant = createdAtFromUser.toInstant(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
-                    final Instant invalidationAtFromUserInstant = invalidationAtFromUser.toInstant(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
-                    final Instant createdAtFromTokenInstant = createdAtFromToken.toInstant().truncatedTo(ChronoUnit.SECONDS);
-                    final Instant invalidationAtFromTokenInstant = invalidationAtFromToken.toInstant().truncatedTo(ChronoUnit.SECONDS);
-                    if (createdAtFromUserInstant.equals(createdAtFromTokenInstant) && invalidationAtFromUserInstant.equals(invalidationAtFromTokenInstant)) {
-                        final Map<UUID, Set<Role>> rolesInOrganizations = new HashMap<>();
-                        user.getOrganization().forEach(organization -> {
-                            final Set<Role> roles = new HashSet<>();
-                            final List<String> rolesFromOrganization = organization.getRole();
-                            rolesFromOrganization.forEach(role -> roles.add(Role.valueOf(role)));
-                            rolesInOrganizations.put(organization.getUuid(), roles);
-                        });
-                        return new YtiUser(user.getEmail(), user.getFirstName(), user.getLastName(), user.getId(), user.isSuperuser(), user.isNewlyCreated(), createdAtFromUser, invalidationAtFromUser, rolesInOrganizations);
+            if ("tempuser".equalsIgnoreCase(tokenData.getType())) {
+                final PublicApiUser user = findTempUserById(tokenData.getUserId());
+                if (user != null) {
+                    final LocalDateTime createdAtFromUser = user.getTokenCreatedAt();
+                    final LocalDateTime invalidationAtFromUser = user.getTokenInvalidationAt();
+                    final Date createdAtFromToken = tokenData.getTokenCreatedAt();
+                    final Date invalidationAtFromToken = tokenData.getTokenInvalidationAt();
+                    if (createdAtFromUser != null && invalidationAtFromUser != null && createdAtFromToken != null && invalidationAtFromToken != null) {
+                        final Instant createdAtFromUserInstant = createdAtFromUser.toInstant(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+                        final Instant invalidationAtFromUserInstant = invalidationAtFromUser.toInstant(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+                        final Instant createdAtFromTokenInstant = createdAtFromToken.toInstant().truncatedTo(ChronoUnit.SECONDS);
+                        final Instant invalidationAtFromTokenInstant = invalidationAtFromToken.toInstant().truncatedTo(ChronoUnit.SECONDS);
+                        if (createdAtFromUserInstant.equals(createdAtFromTokenInstant) && invalidationAtFromUserInstant.equals(invalidationAtFromTokenInstant)) {
+                            return new YtiUser(user.getEmail(), user.getFirstName(), user.getLastName(), user.getId(), false, false, createdAtFromUser, invalidationAtFromUser, emptyMap(), user.getContainerUri(), user.getTokenRole());
+                        } else {
+                            logger.debug("Token validation failed with timestamp info:");
+                            logger.debug("createdAtFromUserInstant: " + createdAtFromUserInstant.toString());
+                            logger.debug("createdAtFromToken: " + createdAtFromTokenInstant.toString());
+                            logger.debug("invalidationAtFromUserInstant: " + invalidationAtFromUserInstant.toString());
+                            logger.debug("invalidationAtFromToken: " + invalidationAtFromTokenInstant.toString());
+                        }
                     } else {
-                        logger.info("Token validation failed with timestamp info:");
-                        logger.info("createdAtInstant: " + createdAtFromUserInstant.toString());
-                        logger.info("createdAtFromToken: " + createdAtFromToken.toString());
-                        logger.info("invalidationAtInstant: " + invalidationAtFromUserInstant.toString());
-                        logger.info("invalidationAtFromToken: " + invalidationAtFromToken.toString());
+                        logger.info("Timestamps in either token or user in database are not present with user: " + tokenData.getUserId());
                     }
-                } else {
-                    logger.info("Timestamps in either token or user in database are not present with user: " + tokenData.getUserId());
                 }
             } else {
-                logger.info("Token user not found from database with ID: " + tokenData.getUserId());
+                final PublicApiUser user = findUserById(tokenData.getUserId());
+                if (user != null) {
+                    final LocalDateTime createdAtFromUser = user.getTokenCreatedAt();
+                    final LocalDateTime invalidationAtFromUser = user.getTokenInvalidationAt();
+                    final Date createdAtFromToken = tokenData.getTokenCreatedAt();
+                    final Date invalidationAtFromToken = tokenData.getTokenInvalidationAt();
+                    if (createdAtFromUser != null && invalidationAtFromUser != null && createdAtFromToken != null && invalidationAtFromToken != null) {
+                        final Instant createdAtFromUserInstant = createdAtFromUser.toInstant(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+                        final Instant invalidationAtFromUserInstant = invalidationAtFromUser.toInstant(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+                        final Instant createdAtFromTokenInstant = createdAtFromToken.toInstant().truncatedTo(ChronoUnit.SECONDS);
+                        final Instant invalidationAtFromTokenInstant = invalidationAtFromToken.toInstant().truncatedTo(ChronoUnit.SECONDS);
+                        if (createdAtFromUserInstant.equals(createdAtFromTokenInstant) && invalidationAtFromUserInstant.equals(invalidationAtFromTokenInstant)) {
+                            final Map<UUID, Set<Role>> rolesInOrganizations = new HashMap<>();
+                            user.getOrganization().forEach(organization -> {
+                                final Set<Role> roles = new HashSet<>();
+                                final List<String> rolesFromOrganization = organization.getRole();
+                                rolesFromOrganization.forEach(role -> roles.add(Role.valueOf(role)));
+                                rolesInOrganizations.put(organization.getUuid(), roles);
+                            });
+                            return new YtiUser(user.getEmail(), user.getFirstName(), user.getLastName(), user.getId(), user.isSuperuser(), user.isNewlyCreated(), createdAtFromUser, invalidationAtFromUser, rolesInOrganizations, null, null);
+                        } else {
+                            logger.debug("Token validation failed with timestamp info:");
+                            logger.debug("createdAtFromUserInstant: " + createdAtFromUserInstant.toString());
+                            logger.debug("createdAtFromToken: " + createdAtFromTokenInstant.toString());
+                            logger.debug("invalidationAtFromUserInstant: " + invalidationAtFromUserInstant.toString());
+                            logger.debug("invalidationAtFromToken: " + invalidationAtFromTokenInstant.toString());
+                        }
+                    } else {
+                        logger.info("Timestamps in either token or user in database are not present with user: " + tokenData.getUserId());
+                    }
+                } else {
+                    logger.info("Token user not found from database with ID: " + tokenData.getUserId());
+                }
             }
         } else {
             logger.info("Token does not have user information!");
@@ -243,20 +315,29 @@ public class PublicApiDao {
         return rowsToOrganizations(rows);
     }
 
-    public void addUserRequest(final String email,
+    public void addUserRequest(final UUID userId,
                                final UUID organizationId,
                                final String role) {
-        database.update("INSERT INTO request (user_id, organization_id, role_name, sent) VALUES ((select id from \"user\" where email = ?),?,?,?)",
-            email, organizationId, role, false);
+        database.update("INSERT INTO request (user_id, organization_id, role_name, sent) VALUES (?,?,?,?)",
+            userId, organizationId, role, false);
     }
 
-    public List<PublicApiUserRequest> getUserRequests(final String email) {
+    public List<PublicApiUserRequest> getUserRequests(final UUID userId) {
         return database.findAll(PublicApiUserRequest.class,
             "SELECT organization_id, array_agg(role_name)\n" +
                 "FROM request r \n" +
-                "LEFT JOIN \"user\" u on (u.id = r.user_id)" +
-                "WHERE u.email = ? \n" +
-                "GROUP BY r.organization_id", email);
+                "WHERE r.user_id = ? \n" +
+                "GROUP BY r.organization_id", userId);
+    }
+
+    public boolean removeTempUser(final UUID id) {
+        final int modifiedRows = database.update("UPDATE tempuser SET email=?, firstname=?, lastname=?, token_created_at=?, token_invalidation_at=?, removed_at=? WHERE id = ?",
+            null, null, null, null, null, LocalDateTime.now(), id);
+        if (modifiedRows > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static final class OrganizationRow {

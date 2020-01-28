@@ -41,10 +41,8 @@ export class UserDetailsComponent implements OnInit {
 
     if (this.configurationService.isMessagingEnabled && this.userService.isLoggedIn()) {
       this.getUserSubscriptionData();
-      console.log('found resources, quit loading');
     } else {
       this.loading = false;
-      console.log('did not find resources, quit loading');
     }
   }
 

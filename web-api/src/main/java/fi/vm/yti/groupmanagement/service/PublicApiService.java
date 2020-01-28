@@ -12,7 +12,6 @@ import fi.vm.yti.groupmanagement.dao.PublicApiDao;
 import fi.vm.yti.groupmanagement.model.PublicApiOrganization;
 import fi.vm.yti.groupmanagement.model.PublicApiUser;
 import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
 
 @Service
 public class PublicApiService {
@@ -32,6 +31,11 @@ public class PublicApiService {
     @Transactional
     public PublicApiUser findUserById(@NotNull UUID id) {
         return this.publicApiDao.findUserById(id);
+    }
+
+    @Transactional
+    public PublicApiUser findTempUserById(@NotNull UUID id) {
+        return this.publicApiDao.findTempUserById(id);
     }
 
     @Transactional
@@ -63,18 +67,6 @@ public class PublicApiService {
     @Transactional
     public List<PublicApiOrganization> getValidOrganizations() {
         return publicApiDao.getValidOrganizations();
-    }
-
-    @Transactional
-    public void addUserRequest(final String email,
-                               final UUID organizationId,
-                               final String role) {
-        publicApiDao.addUserRequest(email, organizationId, role);
-    }
-
-    @Transactional
-    public List<PublicApiUserRequest> getUserRequests(final String email) {
-        return this.publicApiDao.getUserRequests(email);
     }
 
     @Transactional

@@ -7,14 +7,12 @@ import org.dalesbred.Database;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import fi.vm.yti.groupmanagement.model.TempUser;
 import fi.vm.yti.groupmanagement.model.UnsentRequestsForOrganization;
 
 @Repository
 public class EmailSenderDao {
 
-    /**
-     * Sql query for constructing unset email list
-     */
     final String getUnsentQuery = "WITH unsent_requests_in_organizations AS (\n" +
         "    SELECT\n" +
         "      org.id,\n" +
@@ -36,6 +34,8 @@ public class EmailSenderDao {
         "WHERE uo.role_name = 'ADMIN'\n" +
         "GROUP BY uro.id, uro.name_fi, uro.name_en, uro.name_sv, uro.user_id, uro.request_count";
 
+    final String getTempUsersWithContainerQuery = "SELECT email, firstName, lastName, id, token_role, container_uri FROM tempuser WHERE token_created_at IS NULL AND email IS NOT NULL AND container_uri = ?";
+
     private final Database database;
 
     @Autowired
@@ -45,6 +45,10 @@ public class EmailSenderDao {
 
     public List<UnsentRequestsForOrganization> getUnsentRequests() {
         return database.findAll(UnsentRequestsForOrganization.class, getUnsentQuery);
+    }
+
+    public List<TempUser> getTempUsersWithoutTokensAndContainerUri(final String containerUri) {
+        return database.findAll(TempUser.class, getTempUsersWithContainerQuery, containerUri);
     }
 
     public void markRequestAsSentForOrganization(final UUID organizationId) {

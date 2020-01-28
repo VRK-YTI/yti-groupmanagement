@@ -1,7 +1,14 @@
 package fi.vm.yti.groupmanagement.dao;
 
-import fi.vm.yti.groupmanagement.model.*;
-import fi.vm.yti.groupmanagement.service.impl.TokenServiceImpl;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import org.dalesbred.Database;
 import org.dalesbred.query.QueryBuilder;
@@ -10,21 +17,24 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
-
+import fi.vm.yti.groupmanagement.model.Organization;
+import fi.vm.yti.groupmanagement.model.OrganizationListItem;
+import fi.vm.yti.groupmanagement.model.User;
+import fi.vm.yti.groupmanagement.model.UserRequest;
+import fi.vm.yti.groupmanagement.model.UserRequestModel;
+import fi.vm.yti.groupmanagement.model.UserRequestWithOrganization;
+import fi.vm.yti.groupmanagement.model.UserWithRoles;
+import fi.vm.yti.groupmanagement.model.UserWithRolesInOrganizations;
+import fi.vm.yti.groupmanagement.service.impl.TokenServiceImpl;
 import static fi.vm.yti.groupmanagement.util.CollectionUtil.mapToList;
 import static java.time.LocalDateTime.now;
 import static java.util.stream.Collectors.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Repository
 public class FrontendDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(FrontendDao.class);
+    private static final String TYPE_TOKEN_TEMPUSER = "tempuser";
+    private static final String KEY_TYPE = "type";
 
     private final Database db;
     private final TokenServiceImpl tokenService;
@@ -153,6 +163,7 @@ public class FrontendDao {
         return mapToList(rows, row -> {
 
             User user = new User();
+            user.id = row.user.id;
             user.firstName = row.user.firstName;
             user.lastName = row.user.lastName;
             user.email = row.user.email;
@@ -204,16 +215,9 @@ public class FrontendDao {
     }
 
     public void addUserRequest(UserRequestModel userRequest) {
-        logger.info("AddUserRequest 1");
-        // Log new user id
         db.update("INSERT INTO request (user_id, organization_id, role_name, sent) VALUES ((select id from \"user\" where email = ?),?,?,?)",
             userRequest.email, userRequest.organizationId, userRequest.role, false);
-        // Log newly created  user id
-        logger.info("AddUserRequest 2");
         @NotNull List<UUID> userIds = db.findAll(UUID.class, "SELECT id from user where email = ?", userRequest.email);
-        if (userIds != null && userIds.size() == 1) {
-            logger.info("AddNewUser id:" + userIds.get(0).toString());
-        }
     }
 
     public @NotNull List<UserRequestWithOrganization> getAllUserRequestsForOrganizations(@Nullable Set<UUID> organizations) {
@@ -243,15 +247,27 @@ public class FrontendDao {
     }
 
     public String createToken(final UUID userId) {
+        return createToken(userId, null);
+    }
 
-        // TODO: Check if db would work with just plain Date instead of LocalDateTime
+    public String createToken(final UUID userId,
+                              final String type) {
+
         final LocalDateTime createdAtLocalDateTime = now();
         final LocalDateTime invalidatedAtLocalDateTime = createdAtLocalDateTime.plusMonths(6);
         final Date createdAt = Date.from(createdAtLocalDateTime.atZone(ZoneId.of("UTC")).toInstant());
         final Date invalidatedAt = Date.from(invalidatedAtLocalDateTime.atZone(ZoneId.of("UTC")).toInstant());
-        final int success = db.update("UPDATE \"user\" SET token_created_at = ?, token_invalidation_at = ? WHERE id = ?", createdAtLocalDateTime, invalidatedAtLocalDateTime, userId);
+        final int success;
+        if ("tempuser".equalsIgnoreCase(type)) {
+            success = db.update("UPDATE tempuser SET token_created_at = ?, token_invalidation_at = ? WHERE id = ?", createdAtLocalDateTime, invalidatedAtLocalDateTime, userId);
+        } else {
+            success = db.update("UPDATE \"user\" SET token_created_at = ?, token_invalidation_at = ? WHERE id = ?", createdAtLocalDateTime, invalidatedAtLocalDateTime, userId);
+        }
         if (success == 1) {
             final Map<String, Object> claims = new HashMap<>();
+            if (TYPE_TOKEN_TEMPUSER.equalsIgnoreCase(type)) {
+                claims.put(KEY_TYPE, TYPE_TOKEN_TEMPUSER);
+            }
             return tokenService.generateToken(userId, claims, createdAt, invalidatedAt);
         } else {
             throw new RuntimeException("No user found with ID: " + userId.toString());
@@ -262,6 +278,14 @@ public class FrontendDao {
 
         final int success = db.update("UPDATE \"user\" SET token_created_at = NULL, token_invalidation_at = NULL WHERE id = ?", userId);
         return success == 1;
+    }
+
+    public UUID getUserIdForEmail(final String email) {
+        final List<UserRow> rows = db.findAll(UserRow.class, "SELECT u.id FROM \"user\" u WHERE u.email = ?", email);
+        if (rows.size() == 1) {
+            return rows.get(0).user.id;
+        }
+        return null;
     }
 
     void updateOrganizationModifiedStamp(UUID orgId) {
