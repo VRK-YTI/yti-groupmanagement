@@ -52,7 +52,13 @@ public class TokenServiceImpl implements TokenService {
             }
             final Date tokenCreatedAt = claims.getIssuedAt();
             final Date tokenInvalidationAt = claims.getExpiration();
-            final String type = claims.get("type").toString();
+            final Object tokenType = claims.get("type");
+            final String type;
+            if (tokenType != null) {
+                type = tokenType.toString();
+            } else {
+                type = null;
+            }
             return new TokenData(userId, tokenCreatedAt, tokenInvalidationAt, type);
         }
         return null;
