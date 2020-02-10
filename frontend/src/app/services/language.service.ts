@@ -70,4 +70,19 @@ export class LanguageService implements Localizer {
 
     return this.translate(localizable);
   }
+
+  isLocalizableEmpty(localizable: Localizable): boolean {
+
+    if (!localizable) {
+      return true;
+    }
+
+    for (const prop in localizable) {
+      if (localizable.hasOwnProperty(prop)) {
+        return false;
+      }
+    }
+
+    return JSON.stringify(localizable) === JSON.stringify({});
+  }
 }
