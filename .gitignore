@@ -17,3 +17,4 @@ npm-debug.log
 /web-api/.settings
 /web-api/.classpath
 /frontend/.scannerwork
+/frontend/po/*.mo
