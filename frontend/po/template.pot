@@ -195,10 +195,10 @@ msgstr ""
 msgid "SUBSCRIPTIONS"
 msgstr ""
 
-msgid "All roles"
+msgid "Front page"
 msgstr ""
 
-msgid "Front page"
+msgid "ADMIN"
 msgstr ""
 
 msgid "DATA_MODEL_EDITOR"
@@ -213,7 +213,7 @@ msgstr ""
 msgid "MEMBER"
 msgstr ""
 
-msgid "ADMIN"
+msgid "All roles"
 msgstr ""
 
 msgid "All organizations"
