@@ -13,7 +13,7 @@ const clippyImage = require('../../../assets/clippy.svg');
         <app-information-symbol [infoText]="infoText"></app-information-symbol>
       </dt>
       <dd>
-        <a *ngIf="showAsLink" target="_blank" href="{{value}}">{{value}}</a>
+        <a *ngIf="showAsLink" target="_blank" rel="noopener noreferrer" href="{{value}}">{{value}}</a>
         <span class="link" *ngIf="!showAsLink">{{value}}</span>
         <img [src]="this.clippyImage"
              class="svg-icon clipboard"

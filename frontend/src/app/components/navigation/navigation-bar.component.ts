@@ -24,15 +24,15 @@ import {ConfigurationService} from "../../services/configuration.service";
         <li *ngIf="fakeableUsers.length > 0" class="nav-item dropdown" ngbDropdown>
           <a class="nav-link" id="fakeable_user_dropdown" ngbDropdownToggle translate>Impersonate user</a>
           <div ngbDropdownMenu>
-            <a class="dropdown-item" 
-               *ngFor="let user of fakeableUsers" 
-               (click)="fakeUser(user.email)" 
+            <a class="dropdown-item"
+               *ngFor="let user of fakeableUsers"
+               (click)="fakeUser(user.email)"
                id="{{user.email + '_fakeable_user_link'}}">
               {{user.firstName}} {{user.lastName}}
             </a>
           </div>
         </li>
-        
+
         <li class="nav-item" *ngIf="!isLoggedIn()">
           <a class="nav-link" id="log_in_link" (click)="logIn()" translate>LOG IN</a>
         </li>
@@ -70,11 +70,11 @@ import {ConfigurationService} from "../../services/configuration.service";
             </a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" id="navigation_link_user_details" [routerLink]="['/userDetails']" translate>User details</a>
-            <a class="dropdown-item" id="navigation_interoperability_platform_link" href="https://yhteentoimiva.suomi.fi" target="_blank" translate>yhteentoimiva.suomi.fi</a>
-            <a class="dropdown-item" id="navigation_reference_data_link" [href]="configService.codeListUrl" target="_blank" translate>Suomi.fi Reference Data</a>
-            <a class="dropdown-item" id="navigation_terminologies_link" [href]="configService.terminologyUrl" target="_blank" translate>Suomi.fi Terminologies</a>
-            <a class="dropdown-item" id="navigation_data_vocabularies_link" [href]="configService.dataModelUrl" target="_blank" translate>Suomi.fi Data Vocabularies</a>
-            <a class="dropdown-item" id="navigation_comments_link" [href]="configService.commentsUrl" target="_blank" translate>Suomi.fi Comments</a>
+            <a class="dropdown-item" id="navigation_interoperability_platform_link" href="https://yhteentoimiva.suomi.fi" target="_blank" rel="noopener noreferrer" translate>yhteentoimiva.suomi.fi</a>
+            <a class="dropdown-item" id="navigation_reference_data_link" [href]="configService.codeListUrl" target="_blank" rel="noopener noreferrer" translate>Suomi.fi Reference Data</a>
+            <a class="dropdown-item" id="navigation_terminologies_link" [href]="configService.terminologyUrl" target="_blank" rel="noopener noreferrer" translate>Suomi.fi Terminologies</a>
+            <a class="dropdown-item" id="navigation_data_vocabularies_link" [href]="configService.dataModelUrl" target="_blank" rel="noopener noreferrer" translate>Suomi.fi Data Vocabularies</a>
+            <a class="dropdown-item" id="navigation_comments_link" [href]="configService.commentsUrl" target="_blank" rel="noopener noreferrer" translate>Suomi.fi Comments</a>
           </div>
         </li>
       </ul>
@@ -85,7 +85,7 @@ export class NavigationBarComponent {
 
   availableLanguages = [
     { code: 'fi' as Language, name: 'Suomeksi (FI)' },
-    // { code: 'sv' as Language, name: 'På svenska (SV)' },
+    { code: 'sv' as Language, name: 'På svenska (SV)' },
     { code: 'en' as Language, name: 'In English (EN)' }
   ];
 

@@ -1,0 +1,253 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2020-02-14 09:39+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Interoperability platform´s user right management"
+msgstr "Administrering av behörigheter i Interoperabilitetsplattformen"
+
+msgid "Confirm remove"
+msgstr "Godkännande av borttagning"
+
+msgid "Are you sure that you want to remove?"
+msgstr "Ta bort?"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "Cancel"
+msgstr "Ångra"
+
+msgid "Copy value to clipboard"
+msgstr "Kopiera {{value}} till urklipp"
+
+msgid "Copied to clipboard"
+msgstr "Kopierades till urklipp"
+
+msgid "ORGANIZATIONS"
+msgstr "ORGANISATIONER"
+
+msgid "USERS"
+msgstr "ANVÄNDARE"
+
+msgid "Interoperability platform's user right management"
+msgstr "Administrering av behörigheter i Interoperabilitetsplattformen"
+
+msgid "Impersonate user"
+msgstr "Agera som användare"
+
+msgid "LOG IN"
+msgstr "LOGGA IN"
+
+msgid "LOG OUT"
+msgstr "LOGGA UT"
+
+msgid "User details"
+msgstr "Användaruppgifter"
+
+msgid "yhteentoimiva.suomi.fi"
+msgstr ""
+
+msgid "Suomi.fi Reference Data"
+msgstr "Suomi.fi-kodlistor"
+
+msgid "Suomi.fi Terminologies"
+msgstr "Suomi.fi-ordlistor"
+
+msgid "Suomi.fi Data Vocabularies"
+msgstr "Suomi.fi-informationsmodeller"
+
+msgid "Suomi.fi Comments"
+msgstr "Suomi.fi-kommentarer"
+
+msgid "Save"
+msgstr "Spara"
+
+msgid "New organization"
+msgstr "Ny organisation"
+
+msgid "Admin users"
+msgstr "Huvudanvändare"
+
+msgid "No admin users yet"
+msgstr "Ingen huvudanvändare ännu"
+
+msgid "Add user"
+msgstr "Lägg till användare"
+
+msgid "Save failed"
+msgstr "Det gick inte att spara"
+
+msgid "Removed"
+msgstr "Borttaget"
+
+msgid "In Finnish"
+msgstr "På finska"
+
+msgid "Name"
+msgstr "Namn"
+
+msgid "Description"
+msgstr "Beskrivning"
+
+msgid "In English"
+msgstr "På engelska"
+
+msgid "In Swedish"
+msgstr "På svenska"
+
+msgid "Organization"
+msgstr "Organisation"
+
+msgid "Edit organization"
+msgstr "Redigera organisationen"
+
+msgid "Users"
+msgstr "Användare"
+
+msgid "No users yet"
+msgstr "Inga användare ännu"
+
+msgid "Email"
+msgstr "E-post"
+
+msgid "Remove"
+msgstr "Ta bort"
+
+msgid "Changes saved"
+msgstr "Ändringarna har sparats"
+
+msgid "Search organization"
+msgstr "Hämta organisation"
+
+msgid "Organizations"
+msgstr "Organisationer"
+
+msgid "Show removed organizations only"
+msgstr "Visa endast borttagna organisationer"
+
+msgid "Add new organization"
+msgstr "Lägg till ny organisation"
+
+msgid "Search user"
+msgstr "Hämta användare"
+
+msgid "Select user"
+msgstr "Välj användare"
+
+msgid "Access requests"
+msgstr "Begäran om behörighet"
+
+msgid "Decline"
+msgstr "Förkasta"
+
+msgid "Accept"
+msgstr "Godkänn"
+
+msgid "SuperUser"
+msgstr "Huvudanvändare"
+
+msgid "Organizations and roles"
+msgstr "Organisationen och roller"
+
+msgid "Unknown organization"
+msgstr "Okänd organisation"
+
+msgid "API token"
+msgstr "API-nyckel"
+
+msgid "This user has a token already."
+msgstr "Denna användare har redan en API-nyckel."
+
+msgid "Create API token"
+msgstr "Skapa API-nyckel"
+
+msgid "Delete API token"
+msgstr "Ta bort API-nyckeln"
+
+msgid ""
+"You have subscribed to be notified via email when the following resources "
+"change. To remove the subscription, click the icon next to the resource."
+msgstr ""
+"Du har beställt e-postaviseringar om ändringar i följande material. För att "
+"ta bort aviseringen, klicka på ikonen bredvid materialet."
+
+msgid "Email notifications"
+msgstr "E-postaviseringar"
+
+msgid "Daily"
+msgstr "Dagligen"
+
+msgid "Code list resources"
+msgstr "Material som hänför sig kodlistor"
+
+msgid "Terminology resources"
+msgstr "Material som hänför sig till ordlistor"
+
+msgid "Datamodel resources"
+msgstr "Material som hänför sig till informationsmodeller"
+
+msgid "Comments resources"
+msgstr "Material som hänför sig till kommentarer"
+
+msgid "INFORMATION"
+msgstr "UPPGIFTER"
+
+msgid "SUBSCRIPTIONS"
+msgstr "BESTÄLLNINGAR"
+
+msgid "Front page"
+msgstr "Startsida"
+
+msgid "ADMIN"
+msgstr "Huvudanvändare"
+
+msgid "DATA_MODEL_EDITOR"
+msgstr "Datamodellerare"
+
+msgid "TERMINOLOGY_EDITOR"
+msgstr "Terminologiredigerare"
+
+msgid "CODE_LIST_EDITOR"
+msgstr "Kodlistredigerare"
+
+msgid "MEMBER"
+msgstr "Medlem"
+
+msgid "All roles"
+msgstr "Alla roller"
+
+msgid "All organizations"
+msgstr "Alla organisationer"
+
+msgid ""
+"This user will be removed from organization after the changes are saved."
+msgstr "Denna användare tas bort från organisationen när ändringarna sparas."
+
+msgid "This user will be removed."
+msgstr "Denna användare tas bort."
+
+msgid "INFO_TEXT_TOKEN"
+msgstr ""
+"Med den API-nyckel som skapats kan du göra autentiserade "
+"gränssnittsinbjudningar genom att ställa in nyckelns värde till värdet "
+"”Authorization” med prefixet ”Bearer” i HTTP-rubrikuppgiften."
+
+msgid "INFO_TEXT_EMAIL_SUBSCRIPTIONS"
+msgstr ""
+"Med denna funktion väljer du att aktivera/inaktivera aviseringsfunktionen. "
+"Genom att ta bort krysset för “Dagligen” kan du inaktivera alla aviseringar "
+"på en gång. Genom att kryssa för på nytt aktiveras aviseringar."
+
+msgid "REMOVE EMAIL SUBSCRIPTION TO RESOURCE?"
+msgstr "TA BORT E-POSTBESTÄLLNINGEN OM MATERIALET?"

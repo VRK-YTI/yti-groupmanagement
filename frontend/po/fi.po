@@ -232,7 +232,7 @@ msgstr "Kaikki organisaatiot"
 
 msgid ""
 "This user will be removed from organization after the changes are saved."
-msgstr "Tämä käyttäjä poistetaan organisaatiosta kun muutokset talletetaan."
+msgstr "Tämä käyttäjä poistetaan organisaatiosta, kun muutokset talletetaan."
 
 msgid "This user will be removed."
 msgstr "Tämä käyttäjä poistetaan."
