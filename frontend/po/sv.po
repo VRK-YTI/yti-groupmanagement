@@ -56,7 +56,7 @@ msgid "User details"
 msgstr "Användaruppgifter"
 
 msgid "yhteentoimiva.suomi.fi"
-msgstr ""
+msgstr "yhteentoimiva.suomi.fi"
 
 msgid "Suomi.fi Reference Data"
 msgstr "Suomi.fi-kodlistor"
