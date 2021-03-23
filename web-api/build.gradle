@@ -115,10 +115,11 @@ jar {
 springBoot {
     executable = true
     backupSource = false
+    mainClass = 'fi.vm.yti.groupmanagement.Main'
 }
 
 bootRepackage {
-    mainClass = 'fi.vm.yti.groupmanagement.Main'
+    enabled = false
 }
 
 bootRun {
