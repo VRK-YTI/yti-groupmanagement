@@ -1,6 +1,10 @@
 allprojects {
     repositories {
-        mavenCentral()
-        jcenter()
+        mavenCentral {
+            content { excludeGroupByRegex "fi\\.vm\\.yti.*" }
+        }
+        jcenter {
+            content { excludeGroupByRegex "fi\\.vm\\.yti.*" }
+        }
     }
 }
