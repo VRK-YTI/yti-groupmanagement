@@ -1,52 +1,20 @@
 plugins {
     id "base"
     id "idea"
-    id "com.moowork.node" version "0.13"
+    id "com.github.node-gradle.node" version "3.0.1"
 }
 
 node {
-    version = '8.11.4'
+    version = '12.15.0'
     workDir = file("${project.buildDir}/nodejs")
+    yarnVersion = '1.22.5'
     download = true
 }
 
-String yarnVersion = "1.9.4"
-
-// This manual setup is not necessary once https://github.com/srs/gradle-node-plugin/issues/175 is fixed
-task yarnSetup(dependsOn: nodeSetup) {
-    File yarnDir = file(".gradle/yarn")
-
-    group = 'node'
-    description = "Install yarn into .gradle/yarn"
-    inputs.property("yarnVersion", yarnVersion)
-    outputs.dir yarnDir
-
-    doLast {
-        String tarFile = "yarn-v${yarnVersion}.tar.gz"
-        String url = "https://yarnpkg.com/downloads/$yarnVersion/$tarFile"
-
-        yarnDir.deleteDir()
-        yarnDir.mkdirs()
-
-        logger.debug( "Downloading yarn from ${url}" )
-
-        ant.get( src: url, dest: yarnDir, skipexisting: true )
-
-        copy {
-            from tarTree(new File(yarnDir, tarFile))
-            into yarnDir
-        }
-    }
-}
-
-task yarnInstall(type: NodeTask, dependsOn: yarnSetup) {
-    group 'node'
-    description 'Install node packages from package.json using yarn.'
-
+task yarnInstall(type: YarnTask) {
     inputs.file 'package.json'
     inputs.file 'yarn.lock'
     outputs.dir 'node_modules'
-    script = file(".gradle/yarn/yarn-v${yarnVersion}/bin/yarn.js")
     args = ['install', '--pure-lockfile']
 }
 
@@ -54,24 +22,19 @@ task installDependencies(dependsOn: yarnInstall) {
   description = 'Install all frontend dependencies'
 }
 
-task buildProduction(type: NpmTask) {
-    dependsOn installDependencies
-
+task buildProduction(type: YarnTask, dependsOn: installDependencies) {
     inputs.dir 'src'
     inputs.files 'package.json', 'yarn.lock', 'angular-cli.json'
     outputs.dir 'dist'
-
-    args = ['run-script', 'buildProduction']
+    args = ['run', 'buildProduction']
 }
 
-task test(type: NpmTask) {
-  dependsOn installDependencies
-  args = ['run-script', 'e2e']
+task test(type: YarnTask, dependsOn: installDependencies) {
+  args = ['run', 'e2e']
 }
 
-task serve(type: NpmTask) {
-  dependsOn installDependencies
-  args = ['run-script', 'start']
+task serve(type: YarnTask, dependsOn: installDependencies) {
+  args = ['run', 'start']
 }
 
 task deleteNodeModules(type: Delete) {
