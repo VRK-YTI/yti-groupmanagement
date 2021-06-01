@@ -1,0 +1,1 @@
+ALTER TABLE organization ALTER COLUMN url SET NOT NULL;
