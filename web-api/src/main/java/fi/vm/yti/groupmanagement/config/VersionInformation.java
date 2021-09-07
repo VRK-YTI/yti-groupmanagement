@@ -14,7 +14,11 @@ public class VersionInformation {
     @Value(value = "${git.branch}")
     private String branch;
 
-    public String getVersion() {
-        return "build " + commitId + ", branch " + branch;
+    public String getCommitId() {
+        return commitId;
+    }
+
+    public String getBranch() {
+        return branch;
     }
 }
