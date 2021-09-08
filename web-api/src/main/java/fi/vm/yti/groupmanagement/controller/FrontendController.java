@@ -3,6 +3,7 @@ package fi.vm.yti.groupmanagement.controller;
 import java.util.List;
 import java.util.UUID;
 
+import fi.vm.yti.groupmanagement.config.VersionInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import fi.vm.yti.groupmanagement.security.AuthorizationManager;
 import fi.vm.yti.groupmanagement.service.FrontendService;
 import fi.vm.yti.security.AuthenticatedUserProvider;
 import fi.vm.yti.security.YtiUser;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -36,18 +38,21 @@ public class FrontendController {
     private final ApplicationProperties applicationProperties;
     private final ImpersonateProperties impersonateProperties;
     private final AuthorizationManager authorizationManager;
+    private final VersionInformation versionInformation;
 
     @Autowired
     public FrontendController(FrontendService frontendService,
                               AuthenticatedUserProvider userProvider,
                               ApplicationProperties applicationProperties,
                               ImpersonateProperties impersonateProperties,
-                              final AuthorizationManager authorizationManager) {
+                              final AuthorizationManager authorizationManager,
+                              VersionInformation versionInformation) {
         this.frontendService = frontendService;
         this.userProvider = userProvider;
         this.applicationProperties = applicationProperties;
         this.impersonateProperties = impersonateProperties;
         this.authorizationManager = authorizationManager;
+        this.versionInformation = versionInformation;
     }
 
     @RequestMapping(value = "/authenticated-user", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -161,6 +166,11 @@ public class FrontendController {
         } else {
             throw new RuntimeException("User is not logged in, failing token creation.");
         }
+    }
+
+    @RequestMapping(value = "/version")
+    public VersionInformation getVersion() {
+        return this.versionInformation;
     }
 
     /** uncomment if email-sending loop needs to be triggered manually for local testing purposes.
