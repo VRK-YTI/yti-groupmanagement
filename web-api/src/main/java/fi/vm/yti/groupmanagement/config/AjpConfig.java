@@ -1,9 +1,9 @@
 package fi.vm.yti.groupmanagement.config;
 
 import org.apache.catalina.connector.Connector;
+import org.apache.coyote.ajp.AjpNioProtocol;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration;
 public class AjpConfig {
 
     @Bean
-    public EmbeddedServletContainerFactory servletContainer(@Value("${tomcat.ajp.port:}") Integer ajpPort) {
+    public TomcatServletWebServerFactory servletContainer(@Value("${tomcat.ajp.port:}") Integer ajpPort) {
 
-        TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
+        TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
 
         if (ajpPort != null) {
             Connector ajpConnector = new Connector("AJP/1.3");
@@ -21,6 +21,10 @@ public class AjpConfig {
             ajpConnector.setSecure(false);
             ajpConnector.setAllowTrace(false);
             ajpConnector.setScheme("http");
+
+            AjpNioProtocol protocol = (AjpNioProtocol)ajpConnector.getProtocolHandler();
+            protocol.setSecretRequired(false);
+
             tomcat.addAdditionalTomcatConnectors(ajpConnector);
         }
 
