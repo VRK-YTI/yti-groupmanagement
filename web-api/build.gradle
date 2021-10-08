@@ -78,6 +78,7 @@ dependencies {
     compile "org.springframework.security:spring-security-web"
     compile "fi.vm.yti:yti-spring-security:0.1.17"
 
+    compile "javax.xml.bind:jaxb-api:2.1"
     compile "io.jsonwebtoken:jjwt:0.9.1"
 
     compile "org.postgresql:postgresql:42.2.23"
