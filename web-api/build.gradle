@@ -8,18 +8,22 @@ buildscript {
         }
     }
     dependencies {
-        classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '3.2.0')
+        classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '4.24.16')
     }
 }
 
 plugins {
-    id "org.springframework.boot" version "1.5.22.RELEASE"
-    id "fi.evident.apina" version "0.10.7"
-    id "org.sonarqube" version "2.6.2"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    id "org.springframework.boot" version "2.5.2"
+    id "fi.evident.apina" version "0.16.0"
+    id "org.sonarqube" version "3.3"
     id "org.owasp.dependencycheck" version "6.1.6"
+    id "com.gorylenko.gradle-git-properties" version "2.3.1"
+    id "com.github.ben-manes.versions" version "0.39.0"
 }
 
 apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'io.spring.dependency-management'
 
 artifactoryPublish.skip = true
 
@@ -48,9 +52,12 @@ configurations {
     compile.exclude module: 'commons-logging'
 }
 
+sourceCompatibility = 11
+targetCompatibility = 11
+
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Dalston.SR5"
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.3'
     }
 }
 
@@ -69,30 +76,30 @@ dependencies {
     compile "org.springframework.security:spring-security-core"
     compile "org.springframework.security:spring-security-config"
     compile "org.springframework.security:spring-security-web"
-    compile "fi.vm.yti:yti-spring-security:0.1.13"
+    compile "fi.vm.yti:yti-spring-security:0.1.17"
 
+    compile "javax.xml.bind:jaxb-api:2.1"
     compile "io.jsonwebtoken:jjwt:0.9.1"
 
-    compile "org.postgresql:postgresql:9.4.1212"
-    compile "org.dalesbred:dalesbred:1.2.5"
-    compile "org.flywaydb:flyway-core:3.2.1"
+    compile "org.postgresql:postgresql:42.2.23"
+    compile "org.dalesbred:dalesbred:1.3.4"
+    compile "org.flywaydb:flyway-core"
 
     compile "com.fasterxml.jackson.core:jackson-databind"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
 
-    compile "org.jetbrains:annotations:15.0"
+    compile "org.jetbrains:annotations:22.0.0"
 
-    compile "org.apache.httpcomponents:httpclient:4.5.2"
+    compile "org.apache.httpcomponents:httpclient:4.5.13"
 
     compile "org.thymeleaf:thymeleaf"
-    compile "org.thymeleaf:thymeleaf-spring4"
+    compile "org.thymeleaf:thymeleaf-spring5"
 
-    compile "io.springfox:springfox-swagger2:2.7.0"
-    compile "io.springfox:springfox-swagger-ui:2.7.0"
+    compile "io.springfox:springfox-swagger2:3.0.0"
+    compile "io.springfox:springfox-swagger-ui:3.0.0"
 
-    compile group: 'javax.mail', name: 'mail', version: '1.4'
-    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.5.1'
+    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.2'
     compile "org.springframework.boot:spring-boot-starter-mail"
 
     compile 'org.springframework.cloud:spring-cloud-starter-config'
@@ -101,34 +108,27 @@ dependencies {
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 
     compile "ch.qos.logback:logback-core"
-    compile "net.logstash.logback:logstash-logback-encoder:5.0"
+    compile "net.logstash.logback:logstash-logback-encoder:6.6"
 
     testCompile "org.springframework.boot:spring-boot-starter-test"
-    testCompile "junit:junit:4.12"
     testCompile "org.springframework:spring-test"
-    testCompile "com.jayway.jsonpath:json-path:2.0.0"
-    testCompile "org.hsqldb:hsqldb:2.3.4"
+    testCompile "com.jayway.jsonpath:json-path:2.6.0"
+    testCompile "org.hsqldb:hsqldb:2.6.0"
     testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.11'
 
     compile project(':frontend')
 }
 
-jar {
-    baseName = 'yti-groupmanagement'
+springBoot {
+    mainClass = 'fi.vm.yti.groupmanagement.Main'
+}
+
+bootJar {
     dependsOn tasks.findByPath(":frontend:frontendJar")
+    mainClass = 'fi.vm.yti.groupmanagement.Main'
+    archiveFileName = 'yti-groupmanagement.jar'
 
     from zipTree(tasks.findByPath(":frontend:frontendJar").outputs.files.singleFile)
-}
-
-springBoot {
-    executable = true
-    backupSource = false
-    mainClass = 'fi.vm.yti.groupmanagement.Main'
-}
-
-bootRepackage {
-    mainClass = 'fi.vm.yti.groupmanagement.Main'
-
 }
 
 bootRun {
@@ -159,6 +159,7 @@ apina {
     target = new File(project(":frontend").projectDir, 'src/app/apina.ts')
     blackBoxClasses = [/org\.dalesbred\..+/, /java\.time\..+/]
     enumMode = 'STRING_UNION'
+    typeWriteMode = 'CLASS'
 }
 
 tasks.findByPath(":frontend:installDependencies").dependsOn apina
