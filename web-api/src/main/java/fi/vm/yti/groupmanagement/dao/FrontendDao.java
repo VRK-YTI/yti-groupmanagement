@@ -142,12 +142,29 @@ public class FrontendDao {
     }
 
     public @NotNull List<OrganizationListItem> getOrganizationList() {
-        final List<OrganizationListItemRow> rows = db.findAll(OrganizationListItemRow.class, "SELECT id, name_en, name_fi, name_sv FROM organization ORDER BY name_fi");
+        return getOrganizationList(false);
+    }
+
+    public @NotNull List<OrganizationListItem> getOrganizationList(boolean includeChildOrganizations) {
+        StringBuilder sql = new StringBuilder("SELECT id, name_en, name_fi, name_sv FROM organization");
+
+        if (!includeChildOrganizations) {
+            sql.append(" WHERE parent_id IS NULL");
+        }
+
+        sql.append(" ORDER BY name_fi");
+
+        final List<OrganizationListItemRow> rows = db.findAll(OrganizationListItemRow.class, sql.toString());
         return mapToList(rows, row -> new OrganizationListItem(row.id, row.nameFi, row.nameEn, row.nameSv));
     }
 
     public @NotNull Organization getOrganization(UUID organizationId) {
-        return db.findUnique(Organization.class, "SELECT id, name_en, name_fi, name_sv, description_en, description_fi, description_sv, url, removed FROM organization where id = ?", organizationId);
+        return db.findUnique(Organization.class, "SELECT id, name_en, name_fi, name_sv, description_en, description_fi, description_sv, url, removed, parent_id FROM organization where id = ?", organizationId);
+    }
+
+    public @NotNull List<OrganizationListItem> getChildOrganizations(UUID parentOrganizationId) {
+        final List<OrganizationListItemRow> rows = db.findAll(OrganizationListItemRow.class, "SELECT id, name_en, name_fi, name_sv FROM organization where parent_id = ? ORDER BY name_fi ", parentOrganizationId);
+        return mapToList(rows, row -> new OrganizationListItem(row.id, row.nameFi, row.nameEn, row.nameSv));
     }
 
     public @NotNull List<UserWithRoles> getOrganizationUsers(UUID organizationId) {
@@ -182,8 +199,8 @@ public class FrontendDao {
 
     public void createOrganization(final Organization org) {
 
-        db.update("INSERT INTO organization (id, name_en, name_fi, name_sv, description_en, description_fi, description_sv, url) VALUES (?,?,?,?,?,?,?,?)",
-            org.id, org.nameEn, org.nameFi, org.nameSv, org.descriptionEn, org.descriptionFi, org.descriptionSv, org.url);
+        db.update("INSERT INTO organization (id, name_en, name_fi, name_sv, description_en, description_fi, description_sv, url, parent_id) VALUES (?,?,?,?,?,?,?,?,?)",
+            org.id, org.nameEn, org.nameFi, org.nameSv, org.descriptionEn, org.descriptionFi, org.descriptionSv, org.url, org.parentId);
     }
 
     public void updateOrganization(final Organization org) {

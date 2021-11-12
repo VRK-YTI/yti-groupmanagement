@@ -22,13 +22,18 @@ import { flatMap } from 'rxjs/operators';
     <div class="content-box" *ngIf="organization">
 
       <app-back-button id="app_back_button" (back)="back()"></app-back-button>
-      
+
       <div class="clearfix">
         <h1 class="float-left" translate>Organization</h1>
 
         <button class="btn btn-action float-right" id="edit_organization_button" (click)="startEditing()"
                 *ngIf="!editing && !notificationVisible && canEditOrganization()">
           <span translate>Edit organization</span>
+        </button>
+
+        <button class="btn btn-action float-right" id="add_child_organization_button" (click)="addChildOrganization(organizationId)"
+                *ngIf="!editing && !notificationVisible && canEditOrganization()">
+          <span translate>Add child organization</span>
         </button>
 
         <button type="button"
@@ -248,6 +253,10 @@ export class OrganizationComponent {
 
   canEditOrganization(): boolean {
     return this.authorizationManager.canEditOrganization(this.organizationId);
+  }
+
+  addChildOrganization(parentId: string) {
+    this.router.navigate(['/newOrganization', parentId]);
   }
 }
 

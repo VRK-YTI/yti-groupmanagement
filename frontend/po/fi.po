@@ -112,6 +112,12 @@ msgstr "Organisaatio"
 msgid "Edit organization"
 msgstr "Muokkaa organisaatiota"
 
+msgid "Add child organization"
+msgstr "Lisää aliorganisaatio"
+
+msgid "Parent organization"
+msgstr "Aliorganisaatio"
+
 msgid "Users"
 msgstr "Käyttäjät"
 

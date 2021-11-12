@@ -10,11 +10,17 @@ export class OrganizationDetails {
               public descriptionFi: string,
               public descriptionEn: string,
               public descriptionSv: string,
-              public removed: boolean) {
+              public removed: boolean,
+              // TODO: type UUID?
+              public parentId: string) {
   }
 
   static empty() {
-    return new OrganizationDetails('', '', '', '', '', '', '', false);
+    return new OrganizationDetails('', '', '', '', '', '', '', false, '');
+  }
+
+  static emptyChildOrganization(parentId: string) {
+    return new OrganizationDetails('', '', '', '', '', '', '', false, parentId);
   }
 
   static fromOrganization(model: Organization) {
@@ -26,7 +32,8 @@ export class OrganizationDetails {
       model.descriptionFi,
       model.descriptionEn,
       model.descriptionSv,
-      model.removed
+      model.removed,
+      model.parentId ? model.parentId.toString() : ''
     );
   }
 
@@ -55,7 +62,8 @@ export class OrganizationDetails {
       this.descriptionFi,
       this.descriptionEn,
       this.descriptionSv,
-      this.removed
+      this.removed,
+      this.parentId
     );
   }
 }

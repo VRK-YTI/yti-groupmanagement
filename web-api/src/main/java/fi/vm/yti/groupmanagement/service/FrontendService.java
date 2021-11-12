@@ -57,6 +57,15 @@ public class FrontendService {
         check(authorizationManager.canCreateOrganization());
         final UUID id = UUID.randomUUID();
         final Organization org = new Organization();
+
+        if (createOrganizationModel.parentId != null) {
+            OrganizationWithUsers parent = getOrganization(createOrganizationModel.parentId);
+
+            if (parent.organization.parentId != null) {
+                throw new IllegalArgumentException("Child organizations cannot have children") ;
+            }
+        }
+
         org.id = id;
         org.url = createOrganizationModel.url;
         org.nameEn = createOrganizationModel.nameEn;
@@ -65,6 +74,7 @@ public class FrontendService {
         org.descriptionEn = createOrganizationModel.descriptionEn;
         org.descriptionFi = createOrganizationModel.descriptionFi;
         org.descriptionSv = createOrganizationModel.descriptionSv;
+        org.parentId = createOrganizationModel.parentId;
         frontendDao.createOrganization(org);
         for (final String adminUserEmail : createOrganizationModel.adminUserEmails) {
             frontendDao.addUserToRoleInOrganization(adminUserEmail, "ADMIN", id);
@@ -81,6 +91,18 @@ public class FrontendService {
         final Organization organization = updateOrganization.organization;
         final UUID id = organization.id;
         frontendDao.updateOrganization(organization);
+
+        // Mark also child organizations as removed
+        if (organization.removed) {
+            List<OrganizationListItem> childOrganizations = frontendDao.getChildOrganizations(id);
+
+            for (OrganizationListItem orgListItem : childOrganizations) {
+                Organization child = frontendDao.getOrganization(orgListItem.getId());
+                child.removed = true;
+                frontendDao.updateOrganization(child);
+            }
+        }
+
         logOrganizationUpdate(id, updateOrganization.userRoles);
         frontendDao.clearUserRoles(id);
         for (final EmailRole userRole : updateOrganization.userRoles) {
@@ -149,7 +171,12 @@ public class FrontendService {
 
     @Transactional
     public List<OrganizationListItem> getOrganizationList() {
-        return frontendDao.getOrganizationList();
+        return getOrganizationList(false);
+    }
+
+    @Transactional
+    public List<OrganizationListItem> getOrganizationList(boolean includeChildOrganizations) {
+        return frontendDao.getOrganizationList(includeChildOrganizations);
     }
 
     @Transactional
@@ -160,11 +187,13 @@ public class FrontendService {
         final Organization organizationModel = frontendDao.getOrganization(organizationId);
         final List<UserWithRoles> users = frontendDao.getOrganizationUsers(organizationId);
         final List<String> availableRoles = frontendDao.getAvailableRoles();
+        final List<OrganizationListItem> childOrganizations = frontendDao.getChildOrganizations(organizationId);
 
         final OrganizationWithUsers organizationWithUsers = new OrganizationWithUsers();
         organizationWithUsers.organization = organizationModel;
         organizationWithUsers.users = users;
         organizationWithUsers.availableRoles = availableRoles;
+        organizationWithUsers.childOrganizations = childOrganizations;
 
         return organizationWithUsers;
     }
