@@ -166,7 +166,7 @@ public class FrontendService {
 
     @Transactional
     public List<OrganizationListItem> getOrganizationListOpt(final Boolean showRemoved) {
-        return frontendDao.getOrganizationListOpt(showRemoved);
+        return frontendDao.getMainOrganizationListOpt(showRemoved);
     }
 
     @Transactional

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import fi.vm.yti.groupmanagement.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.yti.groupmanagement.dao.PublicApiDao;
-import fi.vm.yti.groupmanagement.model.PrivateApiTempUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUser;
-import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
-import fi.vm.yti.groupmanagement.model.TempUser;
-import fi.vm.yti.groupmanagement.model.TokenModel;
 import fi.vm.yti.security.YtiUser;
 
 @Service
@@ -161,5 +156,10 @@ public class PrivateApiService {
     @Transactional
     public YtiUser validateToken(final TokenModel token) {
         return this.publicApiDao.validateToken(token);
+    }
+
+    @Transactional
+    public PublicApiOrganization getParentOrganization(final UUID childOrganizationId) {
+        return this.publicApiDao.getParentOrganization(childOrganizationId);
     }
 }

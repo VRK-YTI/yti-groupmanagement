@@ -136,8 +136,8 @@ public class FrontendDao {
         }
     }
 
-    public @NotNull List<OrganizationListItem> getOrganizationListOpt(Boolean showRemoved) {
-        final List<OrganizationListItemRow> rows = db.findAll(OrganizationListItemRow.class, "SELECT id, name_en, name_fi, name_sv FROM organization WHERE removed = ? ORDER BY name_fi", showRemoved);
+    public @NotNull List<OrganizationListItem> getMainOrganizationListOpt(Boolean showRemoved) {
+        final List<OrganizationListItemRow> rows = db.findAll(OrganizationListItemRow.class, "SELECT id, name_en, name_fi, name_sv FROM organization WHERE removed = ? AND parent_id IS NULL ORDER BY name_fi", showRemoved);
         return mapToList(rows, row -> new OrganizationListItem(row.id, row.nameFi, row.nameEn, row.nameSv));
     }
 
