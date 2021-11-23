@@ -112,6 +112,12 @@ msgstr ""
 msgid "Edit organization"
 msgstr ""
 
+msgid "Add child organization"
+msgstr ""
+
+msgid "Child organizations"
+msgstr ""
+
 msgid "Users"
 msgstr ""
 

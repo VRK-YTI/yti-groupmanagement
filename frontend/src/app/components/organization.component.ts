@@ -31,8 +31,8 @@ import { flatMap } from 'rxjs/operators';
           <span translate>Edit organization</span>
         </button>
 
-        <button class="btn btn-action float-right" id="add_child_organization_button" (click)="addChildOrganization(organizationId)"
-                *ngIf="!editing && !notificationVisible && canEditOrganization()">
+        <button class="btn btn-action float-right add-child-organization" id="add_child_organization_button" (click)="addChildOrganization(organizationId)"
+                *ngIf="!editing && !notificationVisible && canEditOrganization() && !organization.parentId && !organization.removed">
           <span translate>Add child organization</span>
         </button>
 
@@ -105,6 +105,16 @@ import { flatMap } from 'rxjs/operators';
         </button>
       </div>
 
+      <div *ngIf="!organization.parentId">
+        <h3 translate>Child organizations</h3>
+        <ul>
+          <li *ngFor="let child of organization.childOrganizations">
+            <a (click)="viewChildOrganization(child.id)">
+              {{child.name[translateService.currentLang] || child.name['fi']}}
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   `
 })
@@ -143,7 +153,7 @@ export class OrganizationComponent {
 
     organizationWithUsers$.subscribe(organizationWithUsers => {
 
-      const organizationDetails = OrganizationDetails.fromOrganization(organizationWithUsers.organization);
+      const organizationDetails = OrganizationDetails.fromOrganization(organizationWithUsers.organization, organizationWithUsers.childOrganizations);
       locationService.atOrganization(organizationDetails);
       this.organizationId = organizationWithUsers.organization.id;
       this.organization = organizationDetails;
@@ -257,6 +267,10 @@ export class OrganizationComponent {
 
   addChildOrganization(parentId: string) {
     this.router.navigate(['/newOrganization', parentId]);
+  }
+
+  viewChildOrganization(organizationId: string) {
+    this.router.navigate(['/organization', organizationId]);
   }
 }
 

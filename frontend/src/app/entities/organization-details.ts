@@ -1,5 +1,5 @@
 import { Localizable } from 'yti-common-ui/types/localization';
-import { Organization } from '../apina';
+import { Organization, OrganizationListItem, UUID } from '../apina';
 
 export class OrganizationDetails {
 
@@ -11,19 +11,19 @@ export class OrganizationDetails {
               public descriptionEn: string,
               public descriptionSv: string,
               public removed: boolean,
-              // TODO: type UUID?
-              public parentId: string) {
+              public parentId: UUID,
+              public childOrganizations: OrganizationListItem[]) {
   }
 
   static empty() {
-    return new OrganizationDetails('', '', '', '', '', '', '', false, '');
+    return new OrganizationDetails('', '', '', '', '', '', '', false, '', []);
   }
 
-  static emptyChildOrganization(parentId: string) {
-    return new OrganizationDetails('', '', '', '', '', '', '', false, parentId);
+  static emptyChildOrganization(parentId: UUID) {
+    return new OrganizationDetails('', '', '', '', '', '', '', false, parentId, []);
   }
 
-  static fromOrganization(model: Organization) {
+  static fromOrganization(model: Organization, childOrganizations: OrganizationListItem[]) {
     return new OrganizationDetails(
       model.url,
       model.nameFi,
@@ -33,7 +33,8 @@ export class OrganizationDetails {
       model.descriptionEn,
       model.descriptionSv,
       model.removed,
-      model.parentId ? model.parentId.toString() : ''
+      model.parentId,
+      childOrganizations
     );
   }
 
@@ -63,7 +64,8 @@ export class OrganizationDetails {
       this.descriptionEn,
       this.descriptionSv,
       this.removed,
-      this.parentId
+      this.parentId,
+      this.childOrganizations
     );
   }
 }
