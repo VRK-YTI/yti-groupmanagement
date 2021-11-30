@@ -11,8 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { OrganizationDetailsComponent } from './organization-details.component';
 import { flatMap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
-import { OrganizationRoles, UserWithRoles, UserWithRolesInOrganizations } from '../apina';
-import { e } from '@angular/core/src/render3';
+import { UserWithRolesInOrganizations } from '../apina';
 
 @Component({
   selector: 'app-new-organization',
@@ -82,8 +81,7 @@ export class NewOrganizationComponent {
 
     const parentOrganziation$ = activatedRoute.params.pipe(flatMap(params => {
       if (params['parentId']) {
-        const parent = apiService.getOrganization(params['parentId']);
-        return parent;
+        return apiService.getOrganization(params['parentId']);
       }
       return EMPTY;
     }));

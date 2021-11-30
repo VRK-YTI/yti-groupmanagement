@@ -1,3 +1,5 @@
+@import '~yti-common-ui/theme/variables';
+
 h2, h3 {
   margin-top: 30px;
   margin-bottom: 30px;
@@ -37,4 +39,10 @@ th {
 
 button.add-child-organization {
   margin-right: 10px;
+}
+
+.childOrganizations {
+  list-style-type: none;
+  padding-left: 0px;
+  color: $blue;
 }

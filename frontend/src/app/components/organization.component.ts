@@ -107,7 +107,7 @@ import { flatMap } from 'rxjs/operators';
 
       <div *ngIf="!organization.parentId">
         <h3 translate>Child organizations</h3>
-        <ul>
+        <ul class="childOrganizations">
           <li *ngFor="let child of organization.childOrganizations">
             <a (click)="viewChildOrganization(child.id)">
               {{child.name[translateService.currentLang] || child.name['fi']}}
