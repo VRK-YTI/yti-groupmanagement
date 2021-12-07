@@ -118,8 +118,8 @@ msgstr "Lisää aliorganisaatio"
 msgid "Child organizations"
 msgstr "Aliorganisaatiot"
 
-msgid "Parent organization"
-msgstr "Aliorganisaatio"
+msgid "Main organization"
+msgstr "Pääorganisaatio"
 
 msgid "Users"
 msgstr "Käyttäjät"

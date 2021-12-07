@@ -118,6 +118,9 @@ msgstr ""
 msgid "Child organizations"
 msgstr ""
 
+msgid "Main organization"
+msgstr ""
+
 msgid "Users"
 msgstr ""
 

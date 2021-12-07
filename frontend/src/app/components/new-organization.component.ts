@@ -88,7 +88,16 @@ export class NewOrganizationComponent {
 
     parentOrganziation$.subscribe(organization => {
       this.organization = OrganizationDetails.emptyChildOrganization(organization.organization.id.toString());
-      this.parentOrganization = organization.organization.nameFi;
+
+      if (translateService.currentLang === 'sv') {
+        this.parentOrganization = organization.organization.nameSv;
+      } else if (translateService.currentLang === 'en') {
+        this.parentOrganization = organization.organization.nameEn;
+      }
+
+      if (!this.parentOrganization && this.parentOrganization.trim().length === 0) {
+        this.parentOrganization = organization.organization.nameFi;
+      }
 
       const adminUsers = organization.users
         .filter(user => user.roles.find(role => role === 'ADMIN'))

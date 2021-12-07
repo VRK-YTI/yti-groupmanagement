@@ -113,10 +113,13 @@ msgid "Edit organization"
 msgstr "Redigera organisationen"
 
 msgid "Add child organization"
-msgstr ""
+msgstr "Ny underorganisation"
 
 msgid "Child organizations"
-msgstr ""
+msgstr "Underorganisationer"
+
+msgid "Main organization"
+msgstr "Huvudorganisation"
 
 msgid "Users"
 msgstr "Användare"

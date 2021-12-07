@@ -11,7 +11,7 @@ import { NgForm } from '@angular/forms';
       <div *ngIf="parentOrganization" class="row">
         <div class="col-md-4">
           <div class="form-group section">
-            <p class="form-control-static"><span translate>Parent organization</span>: {{parentOrganization}}</p>
+            <p class="form-control-static"><span translate>Main organization</span>: {{parentOrganization}}</p>
           </div>
         </div>
       </div>
