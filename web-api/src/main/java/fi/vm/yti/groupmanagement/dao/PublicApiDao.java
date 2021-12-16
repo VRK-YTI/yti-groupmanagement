@@ -346,6 +346,13 @@ public class PublicApiDao {
         return null;
     }
 
+    public List<PublicApiOrganization> getChildOrganizations(UUID parentId) {
+        List<OrganizationRow> children = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, " +
+                "url, removed, parent_id from organization where parent_id=?", parentId);
+
+        return rowsToOrganizations(children);
+    }
+
     public static final class OrganizationRow {
 
         public UUID id;

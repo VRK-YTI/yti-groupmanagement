@@ -128,4 +128,9 @@ public class PrivateApiController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @RequestMapping(value = "/childorganizations", method = GET, produces = APPLICATION_JSON_VALUE)
+    public List<PublicApiOrganization> getChildOrganizations(@RequestParam UUID parentId) {
+        return this.privateApiService.getChildOrganizations(parentId);
+    }
 }

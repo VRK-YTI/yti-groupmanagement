@@ -162,4 +162,9 @@ public class PrivateApiService {
     public PublicApiOrganization getParentOrganization(final UUID childOrganizationId) {
         return this.publicApiDao.getParentOrganization(childOrganizationId);
     }
+
+    @Transactional
+    public List<PublicApiOrganization> getChildOrganizations(UUID parentId) {
+        return this.publicApiDao.getChildOrganizations(parentId);
+    }
 }
