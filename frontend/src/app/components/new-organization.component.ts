@@ -95,7 +95,7 @@ export class NewOrganizationComponent {
         this.parentOrganization = organization.organization.nameEn;
       }
 
-      if (!this.parentOrganization && this.parentOrganization.trim().length === 0) {
+      if (!this.parentOrganization || (this.parentOrganization && this.parentOrganization.trim().length === 0)) {
         this.parentOrganization = organization.organization.nameFi;
       }
 
