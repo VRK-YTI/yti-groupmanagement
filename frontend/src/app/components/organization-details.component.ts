@@ -8,6 +8,13 @@ import { NgForm } from '@angular/forms';
   exportAs: 'details',
   template: `
     <form #form="ngForm">
+      <div *ngIf="parentOrganization" class="row">
+        <div class="col-md-4">
+          <div class="form-group section">
+            <p class="form-control-static"><span translate>Main organization</span>: {{parentOrganization}}</p>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-4">
 
@@ -95,9 +102,9 @@ import { NgForm } from '@angular/forms';
         <div class="col-12">
           <div class="form-group">
             <label for="url_input">Url</label>
-            <input *ngIf="editing" 
-                   type="text" 
-                   class="form-control" 
+            <input *ngIf="editing"
+                   type="text"
+                   class="form-control"
                    id="url_input"
                    name="url_input"
                    [(ngModel)]="organization.url">
@@ -108,16 +115,16 @@ import { NgForm } from '@angular/forms';
 
           <div class="form-check" *ngIf="editing">
             <label class="form-check-label">
-              <input class="form-check-input" 
+              <input class="form-check-input"
                      id="organization_removed_checkbox"
-                     type="checkbox" 
-                     name="removed" 
+                     type="checkbox"
+                     name="removed"
                      [(ngModel)]="organization.removed" />
               {{'Removed' | translate}}
             </label>
           </div>
 
-          <div *ngIf="!editing && organization.removed" 
+          <div *ngIf="!editing && organization.removed"
                class="alert alert-danger d-inline-block"
                role="alert"
                translate>Removed</div>
@@ -134,6 +141,9 @@ export class OrganizationDetailsComponent {
 
   @Input()
   editing: boolean;
+
+  @Input()
+  parentOrganization: string;
 
   @ViewChild('form') form: NgForm;
 

@@ -3,6 +3,7 @@ package fi.vm.yti.groupmanagement.controller;
 import java.util.List;
 import java.util.UUID;
 
+import fi.vm.yti.groupmanagement.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,12 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import fi.vm.yti.groupmanagement.model.PrivateApiTempUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUser;
-import fi.vm.yti.groupmanagement.model.PublicApiUserListItem;
-import fi.vm.yti.groupmanagement.model.PublicApiUserRequest;
-import fi.vm.yti.groupmanagement.model.TempUser;
-import fi.vm.yti.groupmanagement.model.TokenModel;
 import fi.vm.yti.groupmanagement.service.EmailSenderService;
 import fi.vm.yti.groupmanagement.service.PrivateApiService;
 import fi.vm.yti.security.YtiUser;
@@ -121,5 +116,21 @@ public class PrivateApiController {
         } else {
             return this.privateApiService.getUserByEmail(newUser.email);
         }
+    }
+
+    @RequestMapping(value = "/parentorganization", method = GET, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<PublicApiOrganization> getParentOrganization(@RequestParam UUID childOrganizationId) {
+        PublicApiOrganization parentOrganization = this.privateApiService.getParentOrganization(childOrganizationId);
+
+        if (parentOrganization != null) {
+            return new ResponseEntity<>(parentOrganization, HttpStatus.OK);
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(value = "/childorganizations", method = GET, produces = APPLICATION_JSON_VALUE)
+    public List<PublicApiOrganization> getChildOrganizations(@RequestParam UUID parentId) {
+        return this.privateApiService.getChildOrganizations(parentId);
     }
 }

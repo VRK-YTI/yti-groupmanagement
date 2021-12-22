@@ -10,17 +10,20 @@ public class PublicApiOrganization {
     private final Map<String, String> description;
     private final String url;
     private final boolean removed;
+    private final UUID parentId;
 
     public PublicApiOrganization(final UUID uuid,
                                  final Map<String, String> prefLabel,
                                  final Map<String, String> description,
                                  final String url,
-                                 final boolean removed) {
+                                 final boolean removed,
+                                 final UUID parentId) {
         this.uuid = uuid;
         this.prefLabel = prefLabel;
         this.description = description;
         this.url = url;
         this.removed = removed;
+        this.parentId = parentId;
     }
 
     public UUID getUuid() {
@@ -42,4 +45,7 @@ public class PublicApiOrganization {
     public boolean getRemoved() {
         return removed;
     }
+
+    public UUID getParentId() { return parentId; }
+
 }

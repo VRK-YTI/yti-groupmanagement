@@ -128,6 +128,12 @@ const appRoutes: Routes = [
     runGuardsAndResolvers: 'always'
   },
   {
+    path: 'newOrganization/:parentId',
+    component: NewOrganizationComponent,
+    canDeactivate: [ConfirmModalCloseEditGuard, ConfirmCancelEditGuard],
+    runGuardsAndResolvers: 'always'
+  },
+  {
     path: 'organization/:id',
     component: OrganizationComponent,
     canDeactivate: [ConfirmModalCloseEditGuard, ConfirmCancelEditGuard],

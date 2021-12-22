@@ -22,13 +22,18 @@ import { flatMap } from 'rxjs/operators';
     <div class="content-box" *ngIf="organization">
 
       <app-back-button id="app_back_button" (back)="back()"></app-back-button>
-      
+
       <div class="clearfix">
         <h1 class="float-left" translate>Organization</h1>
 
         <button class="btn btn-action float-right" id="edit_organization_button" (click)="startEditing()"
                 *ngIf="!editing && !notificationVisible && canEditOrganization()">
           <span translate>Edit organization</span>
+        </button>
+
+        <button class="btn btn-action float-right add-child-organization" id="add_child_organization_button" (click)="addChildOrganization(organizationId)"
+                *ngIf="!editing && !notificationVisible && canEditOrganization() && !organization.parentId && !organization.removed">
+          <span translate>Add child organization</span>
         </button>
 
         <button type="button"
@@ -100,6 +105,16 @@ import { flatMap } from 'rxjs/operators';
         </button>
       </div>
 
+      <div *ngIf="!organization.parentId">
+        <h3 translate>Child organizations</h3>
+        <ul class="childOrganizations">
+          <li *ngFor="let child of organization.childOrganizations">
+            <a (click)="viewChildOrganization(child.id)">
+              {{child.name[translateService.currentLang] || child.name['fi']}}
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   `
 })
@@ -138,7 +153,7 @@ export class OrganizationComponent {
 
     organizationWithUsers$.subscribe(organizationWithUsers => {
 
-      const organizationDetails = OrganizationDetails.fromOrganization(organizationWithUsers.organization);
+      const organizationDetails = OrganizationDetails.fromOrganization(organizationWithUsers.organization, organizationWithUsers.childOrganizations);
       locationService.atOrganization(organizationDetails);
       this.organizationId = organizationWithUsers.organization.id;
       this.organization = organizationDetails;
@@ -248,6 +263,14 @@ export class OrganizationComponent {
 
   canEditOrganization(): boolean {
     return this.authorizationManager.canEditOrganization(this.organizationId);
+  }
+
+  addChildOrganization(parentId: string) {
+    this.router.navigate(['/newOrganization', parentId]);
+  }
+
+  viewChildOrganization(organizationId: string) {
+    this.router.navigate(['/organization', organizationId]);
   }
 }
 
