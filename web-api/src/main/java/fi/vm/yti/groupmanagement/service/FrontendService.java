@@ -54,7 +54,15 @@ public class FrontendService {
 
     @Transactional
     public UUID createOrganization(final CreateOrganization createOrganizationModel) {
-        check(authorizationManager.canCreateOrganization());
+
+        // creating child organization is allowed for organization's admin user
+        // main organizations can be created only by super users
+        if (createOrganizationModel.parentId != null) {
+            check(authorizationManager.canEditOrganization(createOrganizationModel.parentId));
+        } else {
+            check(authorizationManager.canCreateOrganization());
+        }
+
         final UUID id = UUID.randomUUID();
         final Organization org = new Organization();
 
