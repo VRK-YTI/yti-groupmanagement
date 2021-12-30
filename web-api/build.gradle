@@ -161,6 +161,7 @@ apina {
     blackBoxClasses = [/org\.dalesbred\..+/, /java\.time\..+/]
     enumMode = 'STRING_UNION'
     typeWriteMode = 'CLASS'
+    endpoints = [/fi\.vm\.yti\.groupmanagement\.controller\..+/]
 }
 
 tasks.findByPath(":frontend:installDependencies").dependsOn apina
