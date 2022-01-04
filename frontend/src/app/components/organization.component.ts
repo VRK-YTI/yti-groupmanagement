@@ -109,9 +109,10 @@ import { flatMap } from 'rxjs/operators';
         <h3 translate>Child organizations</h3>
         <ul class="childOrganizations">
           <li *ngFor="let child of organization.childOrganizations">
-            <a (click)="viewChildOrganization(child.id)">
+            <a *ngIf="canEditChildOrganization(child.id)" (click)="viewChildOrganization(child.id)">
               {{child.name[translateService.currentLang] || child.name['fi']}}
             </a>
+            <span *ngIf="!canEditChildOrganization(child.id)">{{child.name[translateService.currentLang] || child.name['fi']}}</span>
           </li>
         </ul>
       </div>
@@ -263,6 +264,10 @@ export class OrganizationComponent {
 
   canEditOrganization(): boolean {
     return this.authorizationManager.canEditOrganization(this.organizationId);
+  }
+
+  canEditChildOrganization(organizationId: string): boolean {
+    return this.authorizationManager.canEditOrganization(organizationId);
   }
 
   addChildOrganization(parentId: string) {
