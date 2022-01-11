@@ -70,6 +70,11 @@ public class FrontendController {
         return this.frontendService.getOrganizationList();
     }
 
+    @RequestMapping(value = "/organizations/withChildren", method = GET, produces = APPLICATION_JSON_VALUE)
+    public List<OrganizationListItem> getOrganizationsWithChildren() {
+        return this.frontendService.getOrganizationList(true);
+    }
+
     @RequestMapping(value = "/organization/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public OrganizationWithUsers getOrganization(@PathVariable("id") final UUID id) {
         return this.frontendService.getOrganization(id);
