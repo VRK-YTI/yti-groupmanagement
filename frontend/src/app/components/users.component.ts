@@ -187,9 +187,9 @@ class UserViewModel {
   organizations: { id: UUID, name: Localizable, roles: string[] }[];
 
   constructor(private user: User, organizations: Map<UUID, OrganizationListItem>) {
-    console.info(organizations)
+
     this.organizations = user.organizations.map(org => {
-      console.info(org)
+
       return {
         id: org.id,
         name: requireDefined(organizations.get(org.id)).name,
