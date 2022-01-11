@@ -13,4 +13,5 @@ public class Organization {
     public String descriptionEn;
     public String descriptionSv;
     public boolean removed;
+    public UUID parentId;
 }

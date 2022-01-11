@@ -4,14 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.http.client.utils.DateUtils;
 import org.dalesbred.Database;
@@ -274,21 +267,21 @@ public class PublicApiDao {
             description.put("en", row.descriptionEn);
             description.put("sv", row.descriptionSv);
 
-            return new PublicApiOrganization(row.id, unmodifiableMap(prefLabel), unmodifiableMap(description), row.url, row.removed);
+            return new PublicApiOrganization(row.id, unmodifiableMap(prefLabel), unmodifiableMap(description), row.url, row.removed, row.parentId);
 
         }).collect(toList());
     }
 
     public @NotNull List<PublicApiOrganization> getOrganizations() {
 
-        final List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed from organization");
+        final List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed, parent_id from organization");
 
         return rowsToOrganizations(rows);
     }
 
     public @NotNull List<PublicApiOrganization> getValidOrganizations() {
 
-        final List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed from organization where removed = ?", false);
+        final List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed, parent_id from organization where removed = ?", false);
 
         return rowsToOrganizations(rows);
     }
@@ -310,7 +303,7 @@ public class PublicApiDao {
             throw new IllegalArgumentException(e);
         }
 
-        final List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed from organization where modified > ? AND removed = ?", date, !onlyValid);
+        final List<OrganizationRow> rows = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, url, removed, parent_id from organization where modified > ? AND removed = ?", date, !onlyValid);
 
         return rowsToOrganizations(rows);
     }
@@ -340,6 +333,26 @@ public class PublicApiDao {
         }
     }
 
+    public PublicApiOrganization getParentOrganization(final UUID childOrganizationId) {
+        OrganizationRow parent = database.findUniqueOrNull(OrganizationRow.class, "select child.id, parent.id, " +
+                "parent.name_fi, parent.name_en, parent.name_sv, parent.description_en, parent.description_sv, parent.description_fi, " +
+                "parent.removed from organization child " +
+                "join organization parent on child.parent_id = parent.id where child.id = ?", childOrganizationId);
+
+        if (parent != null) {
+            return rowsToOrganizations(Arrays.asList(parent)).get(0);
+        }
+
+        return null;
+    }
+
+    public List<PublicApiOrganization> getChildOrganizations(UUID parentId) {
+        List<OrganizationRow> children = database.findAll(OrganizationRow.class, "select id, name_en, name_sv, name_fi, description_en, description_sv, description_fi, " +
+                "url, removed, parent_id from organization where parent_id=?", parentId);
+
+        return rowsToOrganizations(children);
+    }
+
     public static final class OrganizationRow {
 
         public UUID id;
@@ -351,5 +364,6 @@ public class PublicApiDao {
         public String descriptionFi;
         public String descriptionSv;
         public Boolean removed;
+        public UUID parentId;
     }
 }

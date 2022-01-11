@@ -14,7 +14,7 @@ buildscript {
 
 plugins {
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
-    id "org.springframework.boot" version "2.5.2"
+    id "org.springframework.boot" version "2.5.8"
     id "fi.evident.apina" version "0.16.0"
     id "org.sonarqube" version "3.3"
     id "org.owasp.dependencycheck" version "6.1.6"
@@ -57,7 +57,7 @@ targetCompatibility = 11
 
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.3'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.5'
     }
 }
 
@@ -113,7 +113,8 @@ dependencies {
     testCompile "org.springframework.boot:spring-boot-starter-test"
     testCompile "org.springframework:spring-test"
     testCompile "com.jayway.jsonpath:json-path:2.6.0"
-    testCompile "org.hsqldb:hsqldb:2.6.0"
+    testCompile "org.testcontainers:postgresql:1.16.2"
+    testCompile "org.testcontainers:junit-jupiter:1.16.2"
     testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.11'
 
     compile project(':frontend')
@@ -160,6 +161,11 @@ apina {
     blackBoxClasses = [/org\.dalesbred\..+/, /java\.time\..+/]
     enumMode = 'STRING_UNION'
     typeWriteMode = 'CLASS'
+    endpoints = [/fi\.vm\.yti\.groupmanagement\.controller\..+/]
 }
 
 tasks.findByPath(":frontend:installDependencies").dependsOn apina
+
+test {
+    useJUnitPlatform()
+}

@@ -1,14 +1,17 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { LocationService } from '../services/location.service';
 import { SearchUserModalService } from './search-user-modal.component';
 import { ignoreModalClose } from 'yti-common-ui/utils/modal';
 import { User } from '../entities/user';
 import { OrganizationDetails } from '../entities/organization-details';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { NotificationDirective } from 'yti-common-ui/components/notification.component';
 import { TranslateService } from '@ngx-translate/core';
 import { OrganizationDetailsComponent } from './organization-details.component';
+import { flatMap } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import { UserWithRolesInOrganizations } from '../apina';
 
 @Component({
   selector: 'app-new-organization',
@@ -18,7 +21,7 @@ import { OrganizationDetailsComponent } from './organization-details.component';
       <app-back-button (back)="back()"></app-back-button>
 
       <div class="clearfix">
-        <h1 class="float-left" translate>New organization</h1>        
+        <h1 class="float-left" translate>New organization</h1>
         <button type="button"
                 id="save_organization_button"
                 [disabled]="!isValid()"
@@ -37,7 +40,8 @@ import { OrganizationDetailsComponent } from './organization-details.component';
 
       <app-organization-details #details="details"
                                 id="organization_details"
-                                [organization]="organization" 
+                                [organization]="organization"
+                                [parentOrganization]="parentOrganization"
                                 [editing]="true"></app-organization-details>
 
       <h3 class="mt-4" translate>Admin users</h3>
@@ -61,6 +65,7 @@ export class NewOrganizationComponent {
   organization = OrganizationDetails.empty();
   organizationAdminUsers: User[] = [];
   successfullySaved = false;
+  parentOrganization: string;
 
   @ViewChild('notification') notification: NotificationDirective;
   @ViewChild('details') details: OrganizationDetailsComponent;
@@ -69,9 +74,43 @@ export class NewOrganizationComponent {
               private searchModal: SearchUserModalService,
               private apiService: ApiService,
               private router: Router,
+              private activatedRoute: ActivatedRoute,
               private translateService: TranslateService) {
 
     locationService.atAddNewOrganization();
+
+    const parentOrganziation$ = activatedRoute.params.pipe(flatMap(params => {
+      if (params['parentId']) {
+        return apiService.getOrganization(params['parentId']);
+      }
+      return EMPTY;
+    }));
+
+    parentOrganziation$.subscribe(organization => {
+      this.organization = OrganizationDetails.emptyChildOrganization(organization.organization.id.toString());
+
+      if (translateService.currentLang === 'sv') {
+        this.parentOrganization = organization.organization.nameSv;
+      } else if (translateService.currentLang === 'en') {
+        this.parentOrganization = organization.organization.nameEn;
+      }
+
+      if (!this.parentOrganization || (this.parentOrganization && this.parentOrganization.trim().length === 0)) {
+        this.parentOrganization = organization.organization.nameFi;
+      }
+
+      const adminUsers = organization.users
+        .filter(user => user.roles.find(role => role === 'ADMIN'))
+        .map(user => {
+          const adminUser = new UserWithRolesInOrganizations();
+          adminUser.firstName = user.user.firstName;
+          adminUser.lastName = user.user.lastName;
+          adminUser.email = user.user.email;
+
+          return new User(adminUser);
+          })
+        this.organizationAdminUsers = adminUsers;
+      });
   }
 
   get organizationAdminEmails(): string[] {

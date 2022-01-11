@@ -112,6 +112,15 @@ msgstr "Organisation"
 msgid "Edit organization"
 msgstr "Redigera organisationen"
 
+msgid "Add child organization"
+msgstr "Ny underorganisation"
+
+msgid "Child organizations"
+msgstr "Underorganisationer"
+
+msgid "Main organization"
+msgstr "Huvudorganisation"
+
 msgid "Users"
 msgstr "Användare"
 

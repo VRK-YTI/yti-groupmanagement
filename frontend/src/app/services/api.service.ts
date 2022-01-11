@@ -63,6 +63,7 @@ export class ApiService {
     model.descriptionFi = org.descriptionFi;
     model.descriptionSv = org.descriptionSv;
     model.adminUserEmails = adminsEmails;
+    model.parentId = org.parentId;
 
     return this.endpoint.createOrganization(model);
   }
@@ -80,6 +81,7 @@ export class ApiService {
     organization.descriptionFi = org.descriptionFi;
     organization.descriptionSv = org.descriptionSv;
     organization.removed = org.removed;
+    organization.parentId = org.parentId;
     model.organization = organization;
     model.userRoles = userRoles;
 
