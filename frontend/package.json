@@ -59,6 +59,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.0",
     "karma-jasmine": "~1.1.1",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "node-sass": "^4.14.0",
     "po-loader": "0.3.1",
     "po2json": "0.4.5",
     "protractor": "~5.4.0",
@@ -68,5 +69,8 @@
   },
   "resolutions": {
     "**/@types/node": "~8.9.4"
+  },
+  "engines": {
+    "node": ">=14.18.1 <15.0.0"
   }
 }

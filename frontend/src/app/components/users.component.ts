@@ -105,7 +105,7 @@ export class UsersComponent {
       }));
     });
 
-    const organizations$ = this.apiService.getOrganizationList();
+    const organizations$ = this.apiService.getOrganizationListWithChildren();
 
     organizations$.subscribe(organizations => {
 
@@ -189,6 +189,7 @@ class UserViewModel {
   constructor(private user: User, organizations: Map<UUID, OrganizationListItem>) {
 
     this.organizations = user.organizations.map(org => {
+
       return {
         id: org.id,
         name: requireDefined(organizations.get(org.id)).name,

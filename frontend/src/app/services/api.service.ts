@@ -51,6 +51,10 @@ export class ApiService {
     return this.endpoint.getOrganizations();
   }
 
+  getOrganizationListWithChildren(): Observable<OrganizationListItem[]> {
+    return this.endpoint.getOrganizationsWithChildren();
+  }
+
   createOrganization(org: OrganizationDetails, adminsEmails: string[]): Observable<UUID> {
 
     const model = new CreateOrganization();
