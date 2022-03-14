@@ -1,12 +1,9 @@
 package fi.vm.yti.groupmanagement.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import fi.vm.yti.groupmanagement.model.*;
+import fi.vm.yti.security.Role;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +20,12 @@ public class PrivateApiService {
     private static final Logger logger = LoggerFactory.getLogger(PrivateApiService.class);
 
     private final PublicApiDao publicApiDao;
+
+    private final static String[] ALLOWED_ROLES = {
+            Role.CODE_LIST_EDITOR.toString(),
+            Role.DATA_MODEL_EDITOR.toString(),
+            Role.TERMINOLOGY_EDITOR.toString()
+    };
 
     @Autowired
     public PrivateApiService(PublicApiDao publicApiDao) {
@@ -144,8 +147,18 @@ public class PrivateApiService {
     @Transactional
     public void addUserRequest(final UUID userId,
                                final UUID organizationId,
-                               final String role) {
-        publicApiDao.addUserRequest(userId, organizationId, role);
+                               final String roles) {
+        var requestedRoles = roles.split(",");
+
+        for (String role : requestedRoles) {
+            if (!Arrays.stream(ALLOWED_ROLES).anyMatch(role::equals)) {
+                throw new IllegalArgumentException("Invalid role value: " + role);
+            }
+        }
+
+        for (String role : requestedRoles) {
+            publicApiDao.addUserRequest(userId, organizationId, role.trim());
+        }
     }
 
     @Transactional
