@@ -1,0 +1,1 @@
+INSERT INTO public.organization (id,url,name_en,name_fi,name_sv) VALUES ('7d3a3c00-5a6b-489b-a3ed-63bb58c26a63','https://yhteentoimiva.suomi.fi/','Interoperability platform developers','Yhteentoimivuusaluusalustan yllapito','Utvecklare av interoperabilitetsplattform');
