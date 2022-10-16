@@ -145,7 +145,7 @@ export class OrganizationDetailsComponent {
   @Input()
   parentOrganization: string;
 
-  @ViewChild('form') form: NgForm;
+  @ViewChild('form', { static: true }) form: NgForm;
 
   constructor(private authorizationManager: AuthorizationManager) {
   }

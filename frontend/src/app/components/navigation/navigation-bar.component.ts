@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Language, LanguageService } from '../../services/language.service';
-import { UserService } from 'yti-common-ui/services/user.service';
-import { LoginModalService } from 'yti-common-ui/components/login-modal.component';
+import { UserService, LoginModalService } from '@vrk-yti/yti-common-ui';
 import { ApiService } from '../../services/api.service';
 import {ConfigurationService} from "../../services/configuration.service";
 

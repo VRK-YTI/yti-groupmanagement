@@ -1,6 +1,6 @@
 import { Component, Injectable, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalService } from 'yti-common-ui/services/modal.service';
+import { ModalService } from '@vrk-yti/yti-common-ui';
 
 @Injectable()
 export class DeleteConfirmationModalService {

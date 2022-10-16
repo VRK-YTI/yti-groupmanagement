@@ -1,4 +1,4 @@
-import { Localizable } from 'yti-common-ui/types/localization';
+import { Localizable } from '@vrk-yti/yti-common-ui';
 import { Organization, OrganizationListItem, UUID } from '../apina';
 
 export class OrganizationDetails {

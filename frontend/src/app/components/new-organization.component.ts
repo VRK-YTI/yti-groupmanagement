@@ -1,12 +1,12 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { LocationService } from '../services/location.service';
 import { SearchUserModalService } from './search-user-modal.component';
-import { ignoreModalClose } from 'yti-common-ui/utils/modal';
+import { ignoreModalClose } from '@vrk-yti/yti-common-ui';
 import { User } from '../entities/user';
 import { OrganizationDetails } from '../entities/organization-details';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
-import { NotificationDirective } from 'yti-common-ui/components/notification.component';
+// import { NotificationDirective } from 'yti-common-ui/components/notification.component';
 import { TranslateService } from '@ngx-translate/core';
 import { OrganizationDetailsComponent } from './organization-details.component';
 import { flatMap } from 'rxjs/operators';
@@ -19,15 +19,17 @@ import { UserWithRolesInOrganizations } from '../apina';
     <div class="content-box">
 
       <app-back-button (back)="back()"></app-back-button>
-
+<!-- //removed
+appNotification
+#notification="notification"
+ -->
       <div class="clearfix">
         <h1 class="float-left" translate>New organization</h1>
         <button type="button"
                 id="save_organization_button"
                 [disabled]="!isValid()"
                 class="btn btn-action float-right"
-                appNotification
-                #notification="notification"
+
                 (click)="saveOrganization()">{{'Save' | translate}}
         </button>
 
@@ -67,8 +69,8 @@ export class NewOrganizationComponent {
   successfullySaved = false;
   parentOrganization: string;
 
-  @ViewChild('notification') notification: NotificationDirective;
-  @ViewChild('details') details: OrganizationDetailsComponent;
+  // @ViewChild('notification') notification: NotificationDirective;
+  @ViewChild('details', { static: true }) details: OrganizationDetailsComponent;
 
   constructor(locationService: LocationService,
               private searchModal: SearchUserModalService,
@@ -136,7 +138,8 @@ export class NewOrganizationComponent {
           this.successfullySaved = true;
           this.router.navigate(['/organization', id]);
         },
-        error: () => this.notification.showFailure(this.translateService.instant('Save failed'), 3000, 'left'),
+        // error: () => this.notification.showFailure(this.translateService.instant('Save failed'), 3000, 'left'),
+        error: () => {}
       });
   }
 

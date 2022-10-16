@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { LanguageService } from '../../services/language.service';
 import { LocationService } from '../../services/location.service';
-import { UserService } from 'yti-common-ui/services/user.service';
-import { NgbTabChangeEvent, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { UserService } from '@vrk-yti/yti-common-ui';
+import { NgbNavChangeEvent, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { MessagingResource } from '../../entities-messaging/messaging-resource';
 import { BehaviorSubject } from 'rxjs';
 import { MessagingService } from '../../services/messaging-service';
@@ -16,7 +16,7 @@ import { ConfigurationService } from '../../services/configuration.service';
 })
 export class UserDetailsComponent implements OnInit {
 
-  @ViewChild('tabSet') tabSet: NgbTabset;
+  @ViewChild('nav') nav: ElementRef<NgbNav>;
 
   APPLICATION_CODELIST = 'codelist';
   APPLICATION_TERMINOLOGY = 'terminology';
@@ -93,8 +93,8 @@ export class UserDetailsComponent implements OnInit {
     });
   }
 
-  onTabChange(event: NgbTabChangeEvent) {
-
+  onNavChange(event: NgbNavChangeEvent) {
+    this.nav.nativeElement.activeId = event.nextId;
     if (event.nextId === 'user_details_info_tab') {
       this.getUserSubscriptionData();
     }

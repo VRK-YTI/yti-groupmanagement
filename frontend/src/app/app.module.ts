@@ -18,14 +18,12 @@ import { SearchUserModalComponent, SearchUserModalService } from './components/s
 import { AuthorizationManager } from './services/authorization-manager.service';
 import { UserRequestsComponent } from './components/user-requests.component';
 import { ApiService } from './services/api.service';
-import { AUTHENTICATED_USER_ENDPOINT, LOCALIZER, YtiCommonModule } from 'yti-common-ui';
+import { AUTHENTICATED_USER_ENDPOINT, LOCALIZER, YtiCommonModule, ConfirmationModalService, ModalService } from '@vrk-yti/yti-common-ui';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { DeleteConfirmationModalComponent, DeleteConfirmationModalService } from './components/delete-confirmation-modal.component';
 import { OrganizationComponent } from './components/organization.component';
-import { ConfirmationModalService } from 'yti-common-ui/components/confirmation-modal.component';
 import { FormatDateTimePipe } from './pipes/format-date-time.pipe';
 import { InformationAboutServiceComponent } from './components/information/information-about-service.component';
-import { ModalService } from 'yti-common-ui/services/modal.service';
 import { NavigationBarComponent } from './components/navigation/navigation-bar.component';
 import { LogoComponent } from './components/navigation/logo.component';
 import { of } from 'rxjs';
@@ -34,6 +32,12 @@ import { InlineClipboardComponent } from './components/form/inline-clipboard';
 import { ClipboardModule } from 'ngx-clipboard';
 import { UserDetailsInformationComponent } from './components/user-details/user-details-information.component';
 import { UserDetailsSubscriptionsComponent } from './components/user-details/user-details-subscriptions.component';
+import enPo from 'raw-loader!po-loader?format=mf!../../po/en.po';
+import svPo from 'raw-loader!po-loader?format=mf!../../po/sv.po';
+import fiPo from 'raw-loader!po-loader?format=mf!../../po/fi.po';
+import fiCommonPo from 'raw-loader!po-loader?format=mf!../../node_modules/@vrk-yti/yti-common-ui/po/fi.po';
+import svCommonPo from 'raw-loader!po-loader?format=mf!../../node_modules/@vrk-yti/yti-common-ui/po/sv.po';
+import enCommonPo from 'raw-loader!po-loader?format=mf!../../node_modules/@vrk-yti/yti-common-ui/po/en.po';
 
 function removeEmptyValues(obj: {}) {
 
@@ -49,18 +53,17 @@ function removeEmptyValues(obj: {}) {
 }
 
 const localizations: { [lang: string]: any } = {
-
   fi: {
-    ...removeEmptyValues(JSON.parse(require(`raw-loader!po-loader?format=mf!../../po/fi.po`))),
-    ...removeEmptyValues(JSON.parse(require(`raw-loader!po-loader?format=mf!yti-common-ui/po/fi.po`)))
-  },
-  en: {
-    ...removeEmptyValues(JSON.parse(require(`raw-loader!po-loader?format=mf!../../po/en.po`))),
-    ...removeEmptyValues(JSON.parse(require(`raw-loader!po-loader?format=mf!yti-common-ui/po/en.po`)))
+    ...removeEmptyValues(JSON.parse(fiPo)),
+    ...removeEmptyValues(JSON.parse(fiCommonPo))
   },
   sv: {
-    ...removeEmptyValues(JSON.parse(require(`raw-loader!po-loader?format=mf!../../po/sv.po`))),
-    ...removeEmptyValues(JSON.parse(require(`raw-loader!po-loader?format=mf!yti-common-ui/po/sv.po`)))
+    ...removeEmptyValues(JSON.parse(svPo)),
+    ...removeEmptyValues(JSON.parse(svCommonPo))
+  },
+  en: {
+    ...removeEmptyValues(JSON.parse(enPo)),
+    ...removeEmptyValues(JSON.parse(enCommonPo))
   }
 };
 
@@ -174,8 +177,8 @@ const appRoutes: Routes = [
     ApinaModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(appRoutes),
-    NgbModule.forRoot(),
+    RouterModule.forRoot(appRoutes, { relativeLinkResolution: 'legacy' }),
+    NgbModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

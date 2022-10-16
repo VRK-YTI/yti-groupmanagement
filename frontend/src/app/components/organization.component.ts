@@ -3,15 +3,12 @@ import { LocationService } from '../services/location.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrganizationDetails } from '../entities/organization-details';
 import { EmailRole, UUID } from '../apina';
-import { ignoreModalClose } from 'yti-common-ui/utils/modal';
+import { ignoreModalClose, anyMatching, remove, ConfirmationModalService } from '@vrk-yti/yti-common-ui';
 import { SearchUserModalService } from './search-user-modal.component';
 import { ApiService } from '../services/api.service';
 import { DeleteConfirmationModalService } from './delete-confirmation-modal.component';
-import { NotificationDirective } from 'yti-common-ui/components/notification.component';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthorizationManager } from '../services/authorization-manager.service';
-import { anyMatching, remove } from 'yti-common-ui/utils/array';
-import { ConfirmationModalService } from 'yti-common-ui/components/confirmation-modal.component';
 import { OrganizationDetailsComponent } from './organization-details.component';
 import { flatMap } from 'rxjs/operators';
 
@@ -121,7 +118,7 @@ import { flatMap } from 'rxjs/operators';
 })
 export class OrganizationComponent {
 
-  @ViewChild('notification') notification: NotificationDirective;
+  // @ViewChild('notification') notification: NotificationDirective;
   @ViewChild('details') details: OrganizationDetailsComponent;
 
   organizationId: UUID;
@@ -196,7 +193,8 @@ export class OrganizationComponent {
   }
 
   get notificationVisible() {
-    return this.notification ? this.notification.isOpen() : false;
+    // return this.notification ? this.notification.isOpen() : false;
+    return false;
   }
 
   get adminUserCount() {
@@ -250,11 +248,12 @@ export class OrganizationComponent {
 
     this.apiService.updateOrganization(this.organizationId, this.organization, userRoles).subscribe({
       next: () => {
-        this.notification.showSuccess(this.translateService.instant('Changes saved'), 3000, 'left');
+        // this.notification.showSuccess(this.translateService.instant('Changes saved'), 3000, 'left');
         this.editing = false;
         this.setPristine();
       },
-      error: () => this.notification.showFailure(this.translateService.instant('Save failed'), 3000, 'left')
+      // error: () => this.notification.showFailure(this.translateService.instant('Save failed'), 3000, 'left')
+      error: () => {}
     });
   }
 

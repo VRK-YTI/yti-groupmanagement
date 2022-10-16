@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { LocationService } from '../services/location.service';
 import { AuthorizationManager } from '../services/authorization-manager.service';
+import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-frontpage',
@@ -9,35 +10,39 @@ import { AuthorizationManager } from '../services/authorization-manager.service'
     <div class="content-box">
 
       <app-user-requests></app-user-requests>
-      
-      <ngb-tabset>
-        <ngb-tab id="organizations_tab">
-          <ng-template ngbTabTitle>
-            <span translate>ORGANIZATIONS</span>
-          </ng-template>
 
-          <ng-template ngbTabContent>
+      <ul ngbNav #nav="ngbNav" (navChange)="onNavChange($event)">
+        <li ngbNavItem="organizations_tab" id="organizations_tab">
+          <a ngbNavLink>
+            <span translate>ORGANIZATIONS</span>
+          </a>
+
+          <ng-template ngbNavContent>
             <app-organizations></app-organizations>
           </ng-template>
-        </ngb-tab>
+        </li>
 
-        <ngb-tab id="users_tab" *ngIf="canBrowseUsers()">
-          <ng-template ngbTabTitle>
+        <li ngbNavItem="users_tab" id="users_tab" *ngIf="canBrowseUsers()">
+          <a ngbNavLink>
             <span translate>USERS</span>
-          </ng-template>
+          </a>
 
-          <ng-template ngbTabContent>
+          <ng-template ngbNavContent>
             <app-users></app-users>
           </ng-template>
-        </ngb-tab>
-        
-      </ngb-tabset>
-      
+        </li>
+
+      </ul>
+
+      <div [ngbNavOutlet]="nav"></div>
+
     </div>
   `
 })
 
 export class FrontpageComponent {
+  @ViewChild('nav') nav: ElementRef<NgbNav>;
+
 
   constructor(locationService: LocationService,
               private authorizationManager: AuthorizationManager) {
@@ -46,5 +51,9 @@ export class FrontpageComponent {
 
   canBrowseUsers(): boolean {
     return this.authorizationManager.canBrowseUsers();
+  }
+
+  onNavChange(event: NgbNavChangeEvent) {
+    this.nav.nativeElement.activeId = event.nextId;
   }
 }

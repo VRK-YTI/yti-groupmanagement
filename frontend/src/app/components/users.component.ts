@@ -3,16 +3,11 @@ import { OrganizationListItem, UUID } from '../apina';
 import { LocationService } from '../services/location.service';
 import { ApiService } from '../services/api.service';
 import { Observable, BehaviorSubject, Subject, combineLatest } from 'rxjs';
-import { Localizable } from 'yti-common-ui/types/localization';
-import { requireDefined } from 'yti-common-ui/utils/object';
-import { index } from 'yti-common-ui/utils/array';
-import { FilterOptions } from 'yti-common-ui/components/filter-dropdown.component';
+import { Localizable, requireDefined, index, FilterOptions, UserService, ignoreModalClose } from '@vrk-yti/yti-common-ui';
 import { LanguageService } from '../services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { User } from '../entities/user';
-import { UserService } from 'yti-common-ui/services/user.service';
 import { AuthorizationManager } from '../services/authorization-manager.service';
-import { ignoreModalClose } from 'yti-common-ui/utils/modal';
 import { DeleteConfirmationModalService } from './delete-confirmation-modal.component';
 import { map } from 'rxjs/operators';
 
