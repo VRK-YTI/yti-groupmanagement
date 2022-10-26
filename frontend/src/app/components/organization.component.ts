@@ -32,13 +32,13 @@ import { flatMap } from 'rxjs/operators';
                 *ngIf="!editing && !notificationVisible && canEditOrganization() && !organization.parentId && !organization.removed">
           <span translate>Add child organization</span>
         </button>
-
+<!-- //removed
+appNotification
+#notification="notification" -->
         <button type="button"
                 id="save_organization_button"
                 *ngIf="editing || notificationVisible"
                 [disabled]="!hasChanges() || !isValid() || notificationVisible"
-                appNotification
-                #notification="notification"
                 class="btn btn-action float-right"
                 (click)="saveOrganization()">{{'Save' | translate}}
         </button>
