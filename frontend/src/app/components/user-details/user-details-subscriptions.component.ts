@@ -1,15 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LanguageService } from '../../services/language.service';
 import { MessagingResource } from '../../entities-messaging/messaging-resource';
-import { ignoreModalClose } from 'yti-common-ui/utils/modal';
-import { NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { ignoreModalClose, UserService, ConfirmationModalService, ErrorModalService, comparingLocalizable, comparingPrimitive } from '@vrk-yti/yti-common-ui';
+import { NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigurationService } from '../../services/configuration.service';
 import { BehaviorSubject } from 'rxjs';
 import { MessagingService } from '../../services/messaging-service';
-import { UserService } from 'yti-common-ui/services/user.service';
-import { ConfirmationModalService } from 'yti-common-ui/components/confirmation-modal.component';
-import { ErrorModalService } from 'yti-common-ui/components/error-modal.component';
-import { comparingLocalizable, comparingPrimitive } from 'yti-common-ui/utils/comparator';
 
 @Component({
   selector: 'app-user-details-subscriptions',
@@ -18,7 +14,7 @@ import { comparingLocalizable, comparingPrimitive } from 'yti-common-ui/utils/co
 })
 export class UserDetailsSubscriptionsComponent implements OnInit {
 
-  @Input() tabSet: NgbTabset;
+  @Input() nav: NgbNav;
 
   messagingResources$ = new BehaviorSubject<Map<string, MessagingResource[]> | null>(null);
 
@@ -155,7 +151,7 @@ export class UserDetailsSubscriptionsComponent implements OnInit {
                   this.messagingResources = messagingResources;
                 }
                 if (messagingResources.size === 0) {
-                  this.tabSet.select('user_details_info_tab');
+                  this.nav.select('user_details_info_tab');
                 }
               }
             }

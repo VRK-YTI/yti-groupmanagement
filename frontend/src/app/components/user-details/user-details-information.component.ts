@@ -1,9 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Role, UserService } from 'yti-common-ui/services/user.service';
+import { Role, UserService, index, comparingLocalizable } from '@vrk-yti/yti-common-ui';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { index } from 'yti-common-ui/utils/array';
-import { comparingLocalizable } from 'yti-common-ui/utils/comparator';
 import { LanguageService } from '../../services/language.service';
 import { LocationService } from '../../services/location.service';
 import { OrganizationListItem } from '../../apina';

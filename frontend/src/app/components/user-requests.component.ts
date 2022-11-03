@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { UserRequestWithOrganization } from '../apina';
-import { remove } from 'yti-common-ui/utils/array';
-import { comparingPrimitive } from 'yti-common-ui/utils/comparator';
+import { remove, comparingPrimitive } from '@vrk-yti/yti-common-ui';
 
 @Component({
   selector: 'app-user-requests',

@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Localizable } from 'yti-common-ui/types/localization';
+import { Localizable } from '@vrk-yti/yti-common-ui';
 import { Subject, Subscription } from 'rxjs';
 import { OrganizationDetails } from '../entities/organization-details';
 import { Title } from "@angular/platform-browser";

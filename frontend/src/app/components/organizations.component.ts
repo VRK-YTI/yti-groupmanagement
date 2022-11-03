@@ -4,15 +4,14 @@ import { Router } from '@angular/router';
 import { AuthorizationManager } from '../services/authorization-manager.service';
 import { ApiService } from '../services/api.service';
 import { LanguageService } from '../services/language.service';
-import { comparingLocalizable } from 'yti-common-ui/utils/comparator';
+import { comparingLocalizable, matches } from '@vrk-yti/yti-common-ui';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
-import { matches } from 'yti-common-ui/utils/string';
 
 @Component({
   selector: 'app-organizations',
-  template: `    
+  template: `
     <app-ajax-loading-indicator *ngIf="loading"></app-ajax-loading-indicator>
-    
+
     <div *ngIf="!loading">
 
       <h1 translate>Organizations</h1>
@@ -32,12 +31,12 @@ import { matches } from 'yti-common-ui/utils/string';
                  (change)="showRemovedChanged()"/>
                  <span id="show_removed_text_span" translate>Show removed organizations only</span>
         </div>
-        
+
         <button class="btn btn-action float-right" id="add_new_organization_button" (click)="addOrganization()"
                 *ngIf="canCreateOrganization()">
           <span translate>Add new organization</span>
         </button>
-      </div>      
+      </div>
 
       <div *ngFor="let organization of filteredOrganizations"
            id="{{'organization_list_item_' + organization.id}}"

@@ -1,13 +1,9 @@
-import {
-  AfterViewInit,
-  Component, ElementRef, Injectable, Input, OnInit, Renderer,
-  ViewChild
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injectable, Input, OnInit, ViewChild, Renderer2 } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { User } from '../entities/user';
 import { ApiService } from '../services/api.service';
-import { ModalService } from 'yti-common-ui/services/modal.service';
+import { ModalService } from '@vrk-yti/yti-common-ui';
 import { map } from 'rxjs/operators';
 
 @Injectable()
@@ -93,7 +89,7 @@ export class SearchUserModalComponent implements OnInit, AfterViewInit {
 
   constructor(public modal: NgbActiveModal,
               private apiService: ApiService,
-              private renderer: Renderer) {
+              private renderer: Renderer2) {
   }
 
   ngOnInit() {
@@ -123,7 +119,7 @@ export class SearchUserModalComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.renderer.invokeElementMethod(this.searchInput.nativeElement, 'focus');
+    this.searchInput.nativeElement.focus();
   }
 
   get search() {
