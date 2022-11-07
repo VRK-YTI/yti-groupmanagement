@@ -263,3 +263,6 @@ msgstr "POISTETAANKO SÄHKÖPOSTITILAUS AINEISTOSTA?"
 
 #~ msgid "Token"
 #~ msgstr "API avain"
+
+msgid "Error"
+msgstr "Virhe"

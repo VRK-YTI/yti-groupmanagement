@@ -3,6 +3,7 @@ import { ApiService } from '../services/api.service';
 import { UserRequestWithOrganization } from '../apina';
 import { remove } from 'yti-common-ui/utils/array';
 import { comparingPrimitive } from 'yti-common-ui/utils/comparator';
+import { ErrorModalService } from 'yti-common-ui/components/error-modal.component';
 
 @Component({
   selector: 'app-user-requests',
@@ -13,27 +14,27 @@ import { comparingPrimitive } from 'yti-common-ui/utils/comparator';
 
       <table class="table table-striped">
         <tbody>
-        <tr *ngFor="let request of userRequests">
+          <tr *ngFor="let request of userRequests">
           <td >{{request.fullName}}</td>
           <td>{{request.email}}</td>
           <td>{{request.organizationName | translateValue }}</td>
           <td>{{request.role | translate}}</td>
-          <td class="actions">
+            <td class="actions">
 
             <button type="button"
                     id="{{request.email + '_decline_request_button'}}"
-                    class="btn btn-link"
+                class="btn btn-link"
                     (click)="declineRequest(request)">
-              <i class="fa fa-trash"></i>
-              <span translate>Decline</span>
-            </button>
+                <i class="fa fa-trash"></i>
+                <span translate>Decline</span>
+              </button>
 
             <button type="button"
                     id="{{request.email + '_accept_request_button'}}"
-                    class="btn btn-action"
+                class="btn btn-action"
                     (click)="acceptRequest(request)" translate>Accept</button>
-          </td>
-        </tr>
+            </td>
+          </tr>
         </tbody>
       </table>
 
@@ -45,8 +46,10 @@ export class UserRequestsComponent {
 
   userRequests: UserRequestWithOrganization[] = [];
 
-  constructor(private apiService: ApiService) {
-
+  constructor(
+    private apiService: ApiService,
+    private errorModalService: ErrorModalService
+  ) {
     this.apiService.getAllUserRequests().subscribe( requests => {
       requests.sort(
         comparingPrimitive<UserRequestWithOrganization>(r => r.lastName)
@@ -62,7 +65,14 @@ export class UserRequestsComponent {
   }
 
   acceptRequest(userRequest: UserRequestWithOrganization) {
-    this.apiService.acceptRequest(userRequest.id).subscribe(() =>
-      remove(this.userRequests, userRequest));
+    this.apiService.acceptRequest(userRequest.id).subscribe(
+      () => remove(this.userRequests, userRequest),
+      (err) =>
+        this.errorModalService.open(
+          "Error",
+          "",
+          err
+        )
+    );
   }
 }
