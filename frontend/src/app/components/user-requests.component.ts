@@ -14,27 +14,27 @@ import { ErrorModalService } from 'yti-common-ui/components/error-modal.componen
 
       <table class="table table-striped">
         <tbody>
-          <tr *ngFor="let request of userRequests">
+        <tr *ngFor="let request of userRequests">
           <td >{{request.fullName}}</td>
           <td>{{request.email}}</td>
           <td>{{request.organizationName | translateValue }}</td>
           <td>{{request.role | translate}}</td>
-            <td class="actions">
+          <td class="actions">
 
             <button type="button"
                     id="{{request.email + '_decline_request_button'}}"
-                class="btn btn-link"
+                    class="btn btn-link"
                     (click)="declineRequest(request)">
-                <i class="fa fa-trash"></i>
-                <span translate>Decline</span>
-              </button>
+              <i class="fa fa-trash"></i>
+              <span translate>Decline</span>
+            </button>
 
             <button type="button"
                     id="{{request.email + '_accept_request_button'}}"
-                class="btn btn-action"
+                    class="btn btn-action"
                     (click)="acceptRequest(request)" translate>Accept</button>
-            </td>
-          </tr>
+          </td>
+        </tr>
         </tbody>
       </table>
 
