@@ -11,7 +11,7 @@ import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
       <app-user-requests></app-user-requests>
 
-      <ul ngbNav #nav="ngbNav" (navChange)="onNavChange($event)">
+      <ul ngbNav #nav="ngbNav" class="nav-tabs" (navChange)="onNavChange($event)">
         <li ngbNavItem="organizations_tab" id="organizations_tab">
           <a ngbNavLink>
             <span translate>ORGANIZATIONS</span>
