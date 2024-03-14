@@ -3,6 +3,7 @@ import { ApiService } from '../services/api.service';
 import { UserRequestWithOrganization } from '../apina';
 import { remove } from 'yti-common-ui/utils/array';
 import { comparingPrimitive } from 'yti-common-ui/utils/comparator';
+import { ErrorModalService } from 'yti-common-ui/components/error-modal.component';
 
 @Component({
   selector: 'app-user-requests',
@@ -45,8 +46,10 @@ export class UserRequestsComponent {
 
   userRequests: UserRequestWithOrganization[] = [];
 
-  constructor(private apiService: ApiService) {
-
+  constructor(
+    private apiService: ApiService,
+    private errorModalService: ErrorModalService
+  ) {
     this.apiService.getAllUserRequests().subscribe( requests => {
       requests.sort(
         comparingPrimitive<UserRequestWithOrganization>(r => r.lastName)
@@ -62,7 +65,14 @@ export class UserRequestsComponent {
   }
 
   acceptRequest(userRequest: UserRequestWithOrganization) {
-    this.apiService.acceptRequest(userRequest.id).subscribe(() =>
-      remove(this.userRequests, userRequest));
+    this.apiService.acceptRequest(userRequest.id).subscribe(
+      () => remove(this.userRequests, userRequest),
+      (err) =>
+        this.errorModalService.open(
+          "Error",
+          "",
+          err
+        )
+    );
   }
 }

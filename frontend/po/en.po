@@ -257,3 +257,6 @@ msgstr ""
 
 msgid "REMOVE EMAIL SUBSCRIPTION TO RESOURCE?"
 msgstr ""
+
+msgid "Error"
+msgstr ""

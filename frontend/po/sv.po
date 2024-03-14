@@ -260,3 +260,6 @@ msgstr ""
 
 msgid "REMOVE EMAIL SUBSCRIPTION TO RESOURCE?"
 msgstr "TA BORT E-POSTBESTÄLLNINGEN OM MATERIALET?"
+
+msgid "Error"
+msgstr "Fel"
